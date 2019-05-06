@@ -9,8 +9,8 @@ app = Flask(__name__)
 app.config.from_object('config.Config')
 api = Api(app)
 
-api.add_resource(Simple, '/simple/<string:todo_id>')
-api.add_resource(Labs, '/labs/<int:lab_id>')
+api.add_resource(Simple, '/simple', endpoint='simple')
+api.add_resource(Labs, '/labs/<int:lab_id>', endpoint='labs')
 
 if __name__ == '__main__':
     app.run(debug=True)
