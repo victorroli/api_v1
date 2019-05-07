@@ -1,4 +1,5 @@
 #!ambapi/bin/python
+# Resource utilizado para fins de teste
 from flask_restful import Resource #Api
 from flask import request, abort
 

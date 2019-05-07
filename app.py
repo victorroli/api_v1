@@ -10,7 +10,7 @@ app.config.from_object('config.Config')
 api = Api(app)
 
 api.add_resource(Simple, '/simple', endpoint='simple')
-api.add_resource(Labs, '/labs/<int:lab_id>', endpoint='labs')
+api.add_resource(Labs, '/labs/<int:lab_id>', '/labs/', endpoint='labs')
 
 if __name__ == '__main__':
     app.run(debug=True)

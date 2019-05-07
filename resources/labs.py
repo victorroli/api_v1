@@ -22,13 +22,19 @@ class Labs(Resource):
         print('Laboratorios => {}'.format(lab_id))
         lab = [lab for lab in labs if lab['id']==lab_id]
         if len(lab)==0:
-            abort(200)
+            abort(404, "Laboratório {} não está cadastrado".format(lab_id))
         return jsonify({'labs':lab})
 
     def post(self):
-        print('Testan   do....')
-        # response = request.form #['data'] #request.post(data = {'key':'value'})
-        # print(response)
         args = parser.parse_args()
+        print('Testando....')
+        response = request.form #['data'] #request.post(data = {'key':'value'})
+        print(response)
         print({'lab': args['lab']})
         return 200
+
+    def put(self):
+        abort(404, 'Método ainda não implementado')
+
+    def delete(self):
+        abort(404, 'Método ainda em construção!')
