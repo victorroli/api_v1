@@ -17,18 +17,13 @@ for _row in res:
 parser = reqparse.RequestParser()
 parser.add_argument('lab')
 
-class Labs(Resource):
-    def get(self, lab_id):
-        print('Laboratorios => {}'.format(lab_id))
-        lab = [lab for lab in labs if lab['id']==lab_id]
-        if len(lab)==0:
-            abort(404, "Laboratório {} não está cadastrado".format(lab_id))
-        return jsonify({'labs':lab})
+class ListLabs(Resource):
+    def get(self):
+        return jsonify({'labs':labs})
 
-    def put(self, lab_id):
+    def post(self):
         args = parser.parse_args()
-        lab = {'lab': args['lab']}
-        return lab, 201
-
-    def delete(self, lab_id):
-        abort(404, 'Método ainda em construção!')
+        response = request.form #['data'] #request.post(data = {'key':'value'})
+        print('Testando....')
+        # print(response['text'])
+        return jsonify({'Laboratorio':response['text']})

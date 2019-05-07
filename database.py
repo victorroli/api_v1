@@ -11,7 +11,7 @@ postgres_db = {
     'port': 5432
 }
 
-print('URL -> {}'.format(URL(**postgres_db)))
+# print('URL -> {}'.format(URL(**postgres_db)))
 engine = create_engine(URL(**postgres_db))
 db = MetaData(engine)
 Base = declarative_base()
