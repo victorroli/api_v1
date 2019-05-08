@@ -26,9 +26,14 @@ class Labs(Resource):
         return jsonify({'labs':lab})
 
     def put(self, lab_id):
+        print('Laboratorio -> {}'.format(lab_id))
         args = parser.parse_args()
         lab = {'lab': args['lab']}
         return lab, 201
 
     def delete(self, lab_id):
-        abort(404, 'Método ainda em construção!')
+        print('Lab id: {}'.format(lab_id))
+        lab = [lab for lab in labs if lab['id']==lab_id]
+        if len(lab)==0:
+            abort(404, message="Laboratório {} não encontrado".format(lab_id))
+        return jsonify({'labs':lab})
