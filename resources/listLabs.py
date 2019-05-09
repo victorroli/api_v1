@@ -1,8 +1,8 @@
-from flask import json, jsonify, abort, make_response, request
+from flask import json, jsonify, request
 from flask_restful import Resource, reqparse
 from models.laboratorio import Laboratorio
 from sqlalchemy import MetaData, select
-from database import engine
+from database import db_session, engine
 
 conn = engine.connect()
 meta = MetaData(engine, reflect=True)
@@ -23,7 +23,9 @@ class ListLabs(Resource):
 
     def post(self):
         args = parser.parse_args()
-        response = request.form #['data'] #request.post(data = {'key':'value'})
-        print('Testando....')
-        # print(response['text'])
-        return jsonify({'Laboratorio':response['text']})
+        response = request.form
+        laboratorio = Laboratorio(response['name'], response['description'],response['host'], response['port'])
+        if laboratorio != '':
+            db_session.add(laboratorio)
+            db_session.commit()
+        return jsonify({'Laboratorio':response['name']})

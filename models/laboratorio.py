@@ -9,7 +9,13 @@ class Laboratorio(Base):
     host = Column(String(30))
     port = Column(Integer)
 
-    def __repr__(self):
-        return '<Laboratorio: %r>' % self.username
+    def __init__(self, name, description, host, port):
+        self.name = name
+        self.description = description
+        self.host = host
+        self.port = port
 
-Base.metadata.create_all(engine, [Base.metadata.tables["laboratorios"]])
+    def __repr__(self):
+        return 'Laboratorio: {} -> {}'.format(self.name, self.description)
+
+# Base.metadata.create_all(engine, [Base.metadata.tables["laboratorios"]])
