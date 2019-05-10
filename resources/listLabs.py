@@ -9,21 +9,23 @@ meta = MetaData(engine, reflect=True)
 table = meta.tables['laboratorios']
 labs = []
 
-lista_labs = select([table])
-res = conn.execute(lista_labs)
-for _row in res:
-    labs.append(dict(_row))
-
 parser = reqparse.RequestParser()
 parser.add_argument('lab')
 
 class ListLabs(Resource):
     def get(self):
+        lista_labs = select([table])
+        res = conn.execute(lista_labs)
+        for _row in res:
+            labs.append(dict(_row))
         return jsonify({'labs':labs})
 
     def post(self):
         args = parser.parse_args()
         response = request.form
+        laboratorio_cadastrado = Laboratorio.query.filter_by(name=response['name']).first()
+        if laboratorio_cadastrado != None:
+            return jsonify({'Laboratório já cadastrado':response['name']})
         laboratorio = Laboratorio(response['name'], response['description'],response['host'], response['port'])
         if laboratorio != '':
             db_session.add(laboratorio)

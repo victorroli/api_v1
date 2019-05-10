@@ -2,38 +2,57 @@ from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from models.laboratorio import Laboratorio
 from sqlalchemy import MetaData, select
-from database import engine
+from database import engine,db_session
 
 conn = engine.connect()
 meta = MetaData(engine, reflect=True)
 table = meta.tables['laboratorios']
-labs = []
-
-lista_labs = select([table])
-res = conn.execute(lista_labs)
-for _row in res:
-    labs.append(dict(_row))
 
 parser = reqparse.RequestParser()
 parser.add_argument('lab')
 
 class Labs(Resource):
     def get(self, lab_id):
-        print('Laboratorios => {}'.format(lab_id))
-        lab = [lab for lab in labs if lab['id']==lab_id]
-        if len(lab)==0:
+        laboratorio = Laboratorio.query.filter_by(id=lab_id).first()
+
+        if laboratorio is None:
             abort(404, "Laboratório {} não está cadastrado".format(lab_id))
-        return jsonify({'labs':lab})
+
+        retorno = {
+            'id':laboratorio.id,
+            'name':laboratorio.name,
+            'host':laboratorio.host,
+            'port':laboratorio.port
+        }
+        return jsonify(retorno)
 
     def put(self, lab_id):
-        print('Laboratorio -> {}'.format(lab_id))
         args = parser.parse_args()
-        lab = {'lab': args['lab']}
-        return lab, 201
+        response = request.form
+        print('Response: {}'.format(response['name']))
+        selecionado = Laboratorio.query.filter_by(id=lab_id).first()
+
+        if response.get('name'):
+            selecionado.name = response['name']
+
+        if response.get('description'):
+            selecionado.description = response['description']
+
+        if response.get('host'):
+            selecionado.host = response['host']
+
+        if response.get('port'):
+            selecionado.port = response['port']
+
+        if response:
+            db_session.commit()
+
+        return jsonify({'lab Atualizado':selecionado.id})
 
     def delete(self, lab_id):
-        print('Lab id: {}'.format(lab_id))
-        lab = [lab for lab in labs if lab['id']==lab_id]
-        if len(lab)==0:
-            abort(404, message="Laboratório {} não encontrado".format(lab_id))
-        return jsonify({'labs':lab})
+        lab_selecionado = Laboratorio.query.filter_by(id=lab_id).first()
+        if lab_selecionado is None:
+            abort(404, "Laboratório {} não está cadastrado".format(lab_id))
+        db_session.delete(lab_selecionado)
+        db_session.commit()
+        return jsonify({'Laboratório deletado':lab_selecionado.name})
