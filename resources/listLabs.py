@@ -7,18 +7,17 @@ from database import db_session, engine
 conn = engine.connect()
 meta = MetaData(engine, reflect=True)
 table = meta.tables['laboratorios']
-labs = []
 
 parser = reqparse.RequestParser()
-parser.add_argument('lab')
+# parser.add_argument('lab')
 
 class ListLabs(Resource):
     def get(self):
-        lista_labs = select([table])
-        res = conn.execute(lista_labs)
+        labs = []
+        res = conn.execute('select * from laboratorios')
         for _row in res:
             labs.append(dict(_row))
-        return jsonify({'labs':labs})
+        return jsonify(labs);
 
     def post(self):
         args = parser.parse_args()

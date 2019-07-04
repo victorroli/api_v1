@@ -8,12 +8,14 @@ class Laboratorio(Base):
     description = Column(String(100))
     host = Column(String(30))
     port = Column(Integer)
+    tempo_experimento = Column(Integer)
 
-    def __init__(self, name, description, host, port):
+    def __init__(self, name, description, host, port, tempo_experimento):
         self.name = name
         self.description = description
         self.host = host
         self.port = port
+        self.tempo_experimento = tempo_experimento
 
     def __repr__(self):
         return 'Laboratorio: {} -> {}'.format(self.name, self.description)

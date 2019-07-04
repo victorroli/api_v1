@@ -12,19 +12,30 @@ parser = reqparse.RequestParser()
 parser.add_argument('lab')
 
 class Labs(Resource):
-    def get(self, lab_id):
-        laboratorio = Laboratorio.query.filter_by(id=lab_id).first()
+    def get(self, lab_id=None):
+        print('Id do moço: ', lab_id);
 
-        if laboratorio is None:
-            abort(404, "Laboratório {} não está cadastrado".format(lab_id))
+        if lab_id is None:
+            labs = []
+            res = conn.execute('select * from laboratorios')
+            for _row in res:
+                labs.append(dict(_row))
+            return jsonify(labs);
+        else:
+            laboratorio = Laboratorio.query.filter_by(id=lab_id).first()
 
-        retorno = {
-            'id':laboratorio.id,
-            'name':laboratorio.name,
-            'host':laboratorio.host,
-            'port':laboratorio.port
-        }
-        return jsonify(retorno)
+            if laboratorio is None:
+                abort(404, "Laboratório {} não está cadastrado".format(lab_id))
+
+            retorno = {
+                'id':laboratorio.id,
+                'name':laboratorio.name,
+                'description': laboratorio.description,
+                'host':laboratorio.host,
+                'port':laboratorio.port,
+                'tempo': laboratorio.tempo_experimento
+            }
+            return jsonify(retorno)
 
     def put(self, lab_id):
         args = parser.parse_args()
@@ -56,3 +67,15 @@ class Labs(Resource):
         db_session.delete(lab_selecionado)
         db_session.commit()
         return jsonify({'Laboratório deletado':lab_selecionado.name})
+
+    def post(self):
+        args = parser.parse_args()
+        response = request.form
+        laboratorio_cadastrado = Laboratorio.query.filter_by(name=response['name']).first()
+        if laboratorio_cadastrado != None:
+            return jsonify({'Laboratório já cadastrado':response['name']})
+        laboratorio = Laboratorio(response['name'], response['description'],response['host'], response['port'])
+        if laboratorio != '':
+            db_session.add(laboratorio)
+            db_session.commit()
+        return jsonify({'Laboratorio':response['name']})
