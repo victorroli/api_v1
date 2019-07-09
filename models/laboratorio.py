@@ -1,14 +1,15 @@
-from sqlalchemy import Table, Column, Integer, String
-from database import Base, engine
+# from sqlalchemy import Table, Column, Integer, String
+# from database import Base, engine
+from database import db
 
-class Laboratorio(Base):
+class Laboratorio(db.Model):
     __tablename__ = 'laboratorios'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(80), unique=True, nullable=False)
-    description = Column(String(100))
-    host = Column(String(30))
-    port = Column(Integer)
-    tempo_experimento = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.String(100))
+    host = db.Column(db.String(30))
+    port = db.Column(db.Integer)
+    tempo_experimento = db.Column(db.Integer)
 
     def __init__(self, name, description, host, port, tempo_experimento):
         self.name = name

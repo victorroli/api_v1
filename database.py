@@ -1,26 +1,17 @@
-from sqlalchemy.engine.url import URL
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine, MetaData
-
+# from sqlalchemy.engine.url import URL
+# from sqlalchemy.orm import scoped_session, sessionmaker
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy import create_engine, MetaData
+from flask_sqlalchemy import SQLAlchemy
 postgres_db = {
-    'drivername': 'postgres',
     'username': 'postgres',
     'password': 'postgres',
     'host': 'localhost',
     'database': 'remotelabs',
-    'port': 5432
+    'port': 5432,
+    'uri': 'SQLALCHEMY_DATABASE_URI'
 }
 
-# print('URL -> {}'.format(URL(**postgres_db)))
-engine = create_engine(URL(**postgres_db))
-db = MetaData(engine)
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
-Base = declarative_base()
-Base.query = db_session.query_property()
-
-def __init__():
-    import models
-    Base.metadata.create_all(bind=engine)
+DB_URL = 'postgresql://{username}:{password}@{host}:{port}/{database}'.format(**postgres_db)
+DB_URI = postgres_db['uri']
+db = SQLAlchemy()
