@@ -1,7 +1,4 @@
-# from sqlalchemy.engine.url import URL
-# from sqlalchemy.orm import scoped_session, sessionmaker
-# from sqlalchemy.ext.declarative import declarative_base
-# from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine
 from flask_sqlalchemy import SQLAlchemy
 postgres_db = {
     'username': 'postgres',
@@ -14,4 +11,5 @@ postgres_db = {
 
 DB_URL = 'postgresql://{username}:{password}@{host}:{port}/{database}'.format(**postgres_db)
 DB_URI = postgres_db['uri']
+engine = create_engine(DB_URL)
 db = SQLAlchemy()

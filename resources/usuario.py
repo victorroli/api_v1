@@ -1,15 +1,11 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from models.usuario import Usuario
-from sqlalchemy import MetaData, select
-from database import engine,db_session
+from database import db
 import re
 
-conn = engine.connect()
-meta = MetaData(engine, reflect=True)
-table = meta.tables['usuarios']
-parser = reqparse.RequestParser()
 
+parser = reqparse.RequestParser()
 #Fazer função para simplificar a declaração dos argumentos
 
 parser.add_argument('name')
@@ -50,8 +46,9 @@ class Usuarios(Resource):
             return jsonify({'Usuário já cadastrado':response['name']})
         usuario = Usuario(response['name'], response['nickname'], response['senha'], response['email'])
         if usuario != '':
-            db_session.add(usuario)
-            db_session.commit()
+            db.session.add(usuario)
+            db.session.commit()
+            print('Cadastrado {} com sucesso!!!'.format(usuario['name']))
         return 200
 
     def put(self, usuario_id):
@@ -71,7 +68,7 @@ class Usuarios(Resource):
             usuario_selecionado.port = response['senha']
 
         if response:
-            db_session.commit()
+            db.session.commit()
 
         return jsonify({'Usuário Atualizado':usuario_selecionado.id})
 
@@ -79,6 +76,6 @@ class Usuarios(Resource):
         usuario_selecionado = Usuario.query.filter_by(id=usuario_id).first()
         if usuario_selecionado is None:
             abort(404, "Usuário {} não está cadastrado".format(usuario_id))
-        db_session.delete(usuario_selecionado)
-        db_session.commit()
+        db.session.delete(usuario_selecionado)
+        db.session.commit()
         return jsonify({'Usuário deletado':usuario_selecionado.name})
