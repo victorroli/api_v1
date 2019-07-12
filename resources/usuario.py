@@ -41,15 +41,17 @@ class Usuarios(Resource):
 
     def post(self):
         response = parser.parse_args()
+        print('Obtidos: {}'.format(response))
         usuario_cadastrado = Usuario.query.filter_by(name=response['name']).first()
         if usuario_cadastrado != None:
-            return jsonify({'Usuário já cadastrado':response['name']})
+            # return jsonify({'Usuário já cadastrado':response['name']})
+            return 200
         usuario = Usuario(response['name'], response['nickname'], response['senha'], response['email'])
         if usuario != '':
             db.session.add(usuario)
             db.session.commit()
-            print('Cadastrado {} com sucesso!!!'.format(usuario['name']))
-        return 200
+            # print('Cadastrado {} com sucesso!!!'.format(usuario))
+        return 201
 
     def put(self, usuario_id):
         response = parser.parse_args()
