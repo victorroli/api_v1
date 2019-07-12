@@ -1,13 +1,12 @@
-from sqlalchemy import Table, Column, Integer, String
-from database import Base, engine
+from database import db
 
-class Usuario(Base):
+class Usuario(db.Model):
     __tablename__ = 'usuarios'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(80), nullable=False)
-    nickname = Column(String(80), unique=True, nullable=False);
-    senha = Column(String(100))
-    email = Column(String(30))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    nickname = db.Column(db.String(80), unique=True, nullable=False);
+    senha = db.Column(db.String(100))
+    email = db.Column(db.String(30))
 
     def __init__(self, name, nickname, senha, email):
         self.name = name
@@ -17,5 +16,3 @@ class Usuario(Base):
 
     def __repr__(self):
         return 'Usuário: {} -> {}'.format(self.name, self.nickname)
-
-Base.metadata.create_all(engine, [Base.metadata.tables["usuarios"]])

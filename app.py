@@ -5,6 +5,8 @@ from resources.simple import Simple
 from resources.labs import Labs
 from resources.listLabs import ListLabs
 from resources.usuario import Usuarios
+from database import db
+from resources.agendamento import Agendamento
 # from models.laboratorio import Laboratorio
 
 app = Flask(__name__)
@@ -15,8 +17,10 @@ api.add_resource(Simple, '/simple', endpoint='simple')
 api.add_resource(Labs, '/labs/<int:lab_id>', endpoint='lab')
 api.add_resource(Labs, '/labs/', endpoint='getLabs')
 # api.add_resource(ListLabs, '/labs/', endpoint='listlabs')
+api.add_resource(Agendamento, '/agendamento', endpoint="agendamento")
 api.add_resource(Usuarios, '/usuario', endpoint="usuario")
 api.add_resource(Usuarios, '/usuario/<string:param_usuario>', endpoint="getUsuario")
 
 if __name__ == '__main__':
+    db.init_app(app)
     app.run(debug=True)

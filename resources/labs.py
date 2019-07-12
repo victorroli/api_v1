@@ -1,25 +1,40 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from models.laboratorio import Laboratorio
-from sqlalchemy import MetaData, select
-from database import engine,db_session
+from database import db
 
-conn = engine.connect()
-meta = MetaData(engine, reflect=True)
-table = meta.tables['laboratorios']
+# conn = engine.connect()
+# meta = MetaData(engine, reflect=True)
+# table = meta.tables['laboratorios']
 
 parser = reqparse.RequestParser()
-parser.add_argument('lab')
+parser.add_argument('id')
+parser.add_argument('name')
+parser.add_argument('description')
+parser.add_argument('host')
+parser.add_argument('port')
+parser.add_argument('tempo_experimento')
 
 class Labs(Resource):
     def get(self, lab_id=None):
-        print('Id do moço: ', lab_id);
 
         if lab_id is None:
             labs = []
-            res = conn.execute('select * from laboratorios')
-            for _row in res:
-                labs.append(dict(_row))
+            response = Laboratorio.query.order_by(Laboratorio.id).all()
+            print('Obtido: {}'.format(response))
+            contador = 0
+            for _row in response:
+                retorno = {
+                    'id':_row.id,
+                    'name':_row.name,
+                    'description': _row.description,
+                    'host':_row.host,
+                    'port':_row.port,
+                    'tempo': _row.tempo_experimento
+                }
+                labs.append(retorno)
+
+            # return labs
             return jsonify(labs);
         else:
             laboratorio = Laboratorio.query.filter_by(id=lab_id).first()
