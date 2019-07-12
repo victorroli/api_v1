@@ -10,7 +10,9 @@ parser.add_argument('minuto_inicio')
 parser.add_argument('horario_fim')
 parser.add_argument('minuto_fim')
 parser.add_argument('observacao')
-# parser.add_argument('laboratorio_id')
+parser.add_argument('laboratorio_id')
+parser.add_argument('usuario_id')
+
 
 class Agendamento(Resource):
     def get(self, agendamento_id=None):
@@ -66,15 +68,15 @@ class Agendamento(Resource):
     def post(self):
         args = parser.parse_args()
         response = args
-        print('Class: {}'.format(Agendamento))
         agendamento = ModelAgendamento.query.filter_by(id=response['id']).first()
         if agendamento != None:
-            return jsonify({'Agendamento já realizado'})
-        agendamento = ModelAgendamento(response['horario_inicio'],
-        response['horario_fim'],response['observacao'])
-        # response['laboratorio_id'], response['usuario_id'])
+            return 200
+        agendamento = ModelAgendamento(response['horario_inicio'], response['minuto_inicio'],
+        response['horario_fim'], response['minuto_fim'], response['observacao'], response['laboratorio_id'], response['usuario_id'])
+
         if agendamento != '':
             db.session.add(agendamento)
             db.session.commit()
             print('Agendamento realizado')
-        return jsonify({'status': 200, 'Agendamento':response['id']})
+        return 201
+        # return jsonify({'status': 200, 'Agendamento':response['id']})
