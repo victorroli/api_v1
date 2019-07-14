@@ -1,7 +1,7 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
-from models.agendamento import ModelAgendamento
-from database import db
+from ..models.agendamento import ModelAgendamento
+from ..database import db
 
 parser = reqparse.RequestParser()
 parser.add_argument('id')

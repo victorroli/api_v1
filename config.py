@@ -2,7 +2,7 @@
 #
 #   Arquivo para configuração de variáveis da aplicação como banco de dados, debug, etc.
 #
-from database import DB_URL, DB_URI
+from app.database import DB_URL, DB_URI
 
 class Config(object):
     DEBUG = True

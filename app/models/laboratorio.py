@@ -1,6 +1,6 @@
 # from sqlalchemy import Table, Column, Integer, String
 # from database import Base, engine
-from database import db
+from ..database import db
 
 class Laboratorio(db.Model):
     __tablename__ = 'laboratorios'
@@ -10,6 +10,8 @@ class Laboratorio(db.Model):
     host = db.Column(db.String(30))
     port = db.Column(db.Integer)
     tempo_experimento = db.Column(db.Integer)
+    status_id = db.Column(db.Integer, db.ForeignKey('status.id'), nullable=False)
+    status = db.relationship('Status', backref='laboratorio', lazy=True)
 
     def __init__(self, name, description, host, port, tempo_experimento):
         self.name = name

@@ -1,7 +1,7 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
-from models.usuario import Usuario
-from database import db
+from ..models.usuario import Usuario
+from ..database import db
 import re
 
 

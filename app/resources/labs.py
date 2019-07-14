@@ -1,7 +1,7 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
-from models.laboratorio import Laboratorio
-from database import db
+from ..models.laboratorio import Laboratorio
+from ..database import db
 
 # conn = engine.connect()
 # meta = MetaData(engine, reflect=True)
