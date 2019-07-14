@@ -1,4 +1,4 @@
-"""empty message
+"""Primeira Migration
 
 Revision ID: 2c678d7078cc
 Revises: 
