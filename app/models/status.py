@@ -9,4 +9,4 @@ class Status(db.Model):
         self.descricao = descricao
 
     def __repr__(self):
-        return 'Status: {} -> {}'.format(self.id, self.descricao)
+        return 'Status: {} - {}'.format(self.id, self.descricao)

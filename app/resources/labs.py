@@ -1,11 +1,8 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from ..models.laboratorio import Laboratorio
+from ..models.equipamento import Equipamento
 from ..database import db
-
-# conn = engine.connect()
-# meta = MetaData(engine, reflect=True)
-# table = meta.tables['laboratorios']
 
 parser = reqparse.RequestParser()
 parser.add_argument('id')
@@ -17,11 +14,9 @@ parser.add_argument('tempo_experimento')
 
 class Labs(Resource):
     def get(self, lab_id=None):
-
         if lab_id is None:
             labs = []
             response = Laboratorio.query.order_by(Laboratorio.id).all()
-            print('Obtido: {}'.format(response))
             contador = 0
             for _row in response:
                 retorno = {
@@ -30,14 +25,24 @@ class Labs(Resource):
                     'description': _row.description,
                     'host':_row.host,
                     'port':_row.port,
-                    'tempo': _row.tempo_experimento
+                    'tempo': _row.tempo_experimento,
                 }
                 labs.append(retorno)
 
-            # return labs
             return jsonify(labs);
         else:
             laboratorio = Laboratorio.query.filter_by(id=lab_id).first()
+            equipamentos = Equipamento.query.filter_by(laboratorio_id=lab_id).all()
+            equipamentos_lab = []
+            # print('Equipamentos disponíveis : {}'.format(equipamentos))
+            for _row in equipamentos:
+                equipamentos_ret = {
+                    'id':_row.id,
+                    'nome':_row.nome,
+                    'uri': _row.uri,
+                    'descricao':_row.descricao
+                }
+                equipamentos_lab.append(equipamentos_ret)
 
             if laboratorio is None:
                 abort(404, "Laboratório {} não está cadastrado".format(lab_id))
@@ -48,7 +53,8 @@ class Labs(Resource):
                 'description': laboratorio.description,
                 'host':laboratorio.host,
                 'port':laboratorio.port,
-                'tempo': laboratorio.tempo_experimento
+                'tempo': laboratorio.tempo_experimento,
+                'equipamentos': equipamentos_lab
             }
             return jsonify(retorno)
 
