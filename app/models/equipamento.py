@@ -9,11 +9,11 @@ class Equipamento(db.Model):
     laboratorio_id = db.Column(db.Integer, db.ForeignKey('laboratorios.id'), nullable=False)
     laboratorio = db.relationship('Laboratorio', backref='equipamento', lazy=True)
 
-    def __init__(self, uri, nome, descricao, laboratorio_id):
-        self.uri = uri
+    def __init__(self, nome, uri, descricao, laboratorio_id):
         self.nome = nome
+        self.uri = uri
         self.descricao = descricao
         self.laboratorio_id = laboratorio_id
 
     def __repr__(self):
-        return 'Equipamento: {} -> {}'.format(self.nome, self.descricao)
+        return '{}'.format(self.nome)

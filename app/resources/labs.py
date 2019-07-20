@@ -9,8 +9,9 @@ parser.add_argument('id')
 parser.add_argument('name')
 parser.add_argument('description')
 parser.add_argument('host')
-parser.add_argument('port')
-parser.add_argument('tempo_experimento')
+parser.add_argument('port', type=int)
+parser.add_argument('tempo_experimento', type=int)
+parser.add_argument('equipamentos','--list', action='append')
 
 class Labs(Resource):
     def get(self, lab_id=None):
@@ -26,6 +27,7 @@ class Labs(Resource):
                     'host':_row.host,
                     'port':_row.port,
                     'tempo': _row.tempo_experimento,
+                    'status': _row.status_id
                 }
                 labs.append(retorno)
 
@@ -34,7 +36,6 @@ class Labs(Resource):
             laboratorio = Laboratorio.query.filter_by(id=lab_id).first()
             equipamentos = Equipamento.query.filter_by(laboratorio_id=lab_id).all()
             equipamentos_lab = []
-            # print('Equipamentos disponíveis : {}'.format(equipamentos))
             for _row in equipamentos:
                 equipamentos_ret = {
                     'id':_row.id,
@@ -54,6 +55,7 @@ class Labs(Resource):
                 'host':laboratorio.host,
                 'port':laboratorio.port,
                 'tempo': laboratorio.tempo_experimento,
+                'status': laboratorio.status_id,
                 'equipamentos': equipamentos_lab
             }
             return jsonify(retorno)
@@ -61,7 +63,6 @@ class Labs(Resource):
     def put(self, lab_id):
         args = parser.parse_args()
         response = request.form
-        print('Response: {}'.format(response['name']))
         selecionado = Laboratorio.query.filter_by(id=lab_id).first()
 
         if response.get('name'):
@@ -90,13 +91,30 @@ class Labs(Resource):
         return jsonify({'Laboratório deletado':lab_selecionado.name})
 
     def post(self):
-        args = parser.parse_args()
-        response = request.form
+        response = parser.parse_args()
+
+        def cadastraEquipamento(laboratorio_id):
+            for row in response['equipamentos']:
+                row = json.loads(row.replace("\'", "\""))
+
+                equipamentoObj = Equipamento(row['nome'], row['uri'],
+                row['descricao'], laboratorio_id)
+
+                db.session.add(equipamentoObj)
+            db.session.commit()
+
+
         laboratorio_cadastrado = Laboratorio.query.filter_by(name=response['name']).first()
         if laboratorio_cadastrado != None:
-            return jsonify({'Laboratório já cadastrado':response['name']})
-        laboratorio = Laboratorio(response['name'], response['description'],response['host'], response['port'])
+            return 200
+
+        laboratorio = Laboratorio(response['name'], response['description'],
+        response['host'], response['port'], response['tempo_experimento'], 1)
+
         if laboratorio != '':
-            db_session.add(laboratorio)
-            db_session.commit()
-        return jsonify({'Laboratorio':response['name']})
+
+            db.session.add(laboratorio)
+            db.session.commit()
+            laboratorioCadastrado = Laboratorio.query.filter_by(name=response['name']).first()
+            cadastraEquipamento(laboratorioCadastrado.id)
+        return 201

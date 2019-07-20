@@ -82,6 +82,7 @@ class Equipamento(Resource):
         return jsonify({'Equipamento deletado'})
 
     def post(self):
+        print('Entrou no cad lab')
         args = parser.parse_args()
         response = request.form
         equipamento_cadastrado = Equipamento.query.filter_by(nome=response['nome']).first()
