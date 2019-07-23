@@ -21,6 +21,6 @@ class Laboratorio(db.Model):
         self.status_id = status_id
 
     def __repr__(self):
-        return 'Laboratorio: {} e status{}'.format(self.id, self.status)
+        return '{}'.format(self.id)
 
 # Base.metadata.create_all(engine, [Base.metadata.tables["laboratorios"]])
