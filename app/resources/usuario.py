@@ -8,10 +8,11 @@ import re
 parser = reqparse.RequestParser()
 #Fazer função para simplificar a declaração dos argumentos
 
-parser.add_argument('name')
+parser.add_argument('nome')
 parser.add_argument('nickname')
 parser.add_argument('senha')
 parser.add_argument('email')
+parser.add_argument('papel_id')
 
 class Usuarios(Resource):
 
@@ -31,10 +32,11 @@ class Usuarios(Resource):
 
         retorno = {
             'id':usuario.id,
-            'name':usuario.name,
+            'nome':usuario.nome,
             'nickname': usuario.nickname,
             'email':usuario.email,
             'senha':usuario.senha,
+            'papel_id': usuario.papel_id
         }
         return jsonify(retorno)
 
@@ -42,16 +44,18 @@ class Usuarios(Resource):
     def post(self):
         response = parser.parse_args()
         print('Obtidos: {}'.format(response))
-        usuario_cadastrado = Usuario.query.filter_by(name=response['name']).first()
+        usuario_cadastrado = Usuario.query.filter_by(nome=response['nome']).first()
         print('Usuario cad: {}'.format(usuario_cadastrado))
         if usuario_cadastrado != None:
-            # return jsonify({'Usuário já cadastrado':response['name']})
+            print('Usuário {} já cadastrado'.format(response['name']))
             return 200
-        usuario = Usuario(response['name'], response['nickname'], response['senha'], response['email'])
+        usuario = Usuario(nome=response['nome'], nickname=response['nickname'],
+        senha=response['senha'], email=response['email'], papel_id=int(response['papel_id']))
+        print('user: {}'.format(usuario))
         if usuario != '':
             db.session.add(usuario)
             db.session.commit()
-            # print('Cadastrado {} com sucesso!!!'.format(usuario))
+            print('Cadastrado {} com sucesso!!!'.format(usuario))
         return 201
 
     def put(self, usuario_id):
