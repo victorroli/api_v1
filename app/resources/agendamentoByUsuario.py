@@ -10,30 +10,24 @@ parser.add_argument('horario_fim')
 parser.add_argument('data')
 parser.add_argument('observacao')
 parser.add_argument('laboratorio_id')
-parser.add_argument('usuario_id', required=True)
+parser.add_argument('usuario_id')
 
 
-class Agendamento(Resource):
-    def get(self, id=None):
+class AgendamentoByUsuario(Resource):
+    def get(self, usuario_id=None):
         agendamentos = []
-        where = ''
-        if id != None:
-            where = ' where laboratorio_id = {}'.format(id);
-
-        result = engine.execute('select * from agendamentos {}'.format(where))
+        result = ModelAgendamento.query.filter_by(usuario_id=usuario_id)
 
         for _row in result:
-            print('Result: {}'.format(_row))
             agendamento = {
-                'id': _row['id'],
-                'periodo_inicio': _row['periodo_inicio'],
-                'periodo_fim': _row['periodo_fim'],
-                'usuario_id': _row['usuario_id'],
-                'observacao': _row['observacao']
+                'periodo_inicio': _row.periodo_inicio,
+                'periodo_fim': _row.periodo_fim,
+                'usuario_id': _row.usuario_id,
+                'observacao': _row.observacao,
+                'id': _row.id
             }
-            print('Objeto: {}'.format(agendamento))
             agendamentos.append(agendamento)
-        print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
+
         if len(agendamentos) == 0:
             print('Nenhum agendamento')
             return 200
@@ -41,31 +35,27 @@ class Agendamento(Resource):
         return jsonify(agendamentos)
 
     def put(self, id):
+        args = parser.parse_args()
+        response = request.form
+        print('Response: {}'.format(response['name']))
+        selecionado = Agendamento.query.filter_by(id=id).first()
 
-        response = parser.parse_args()
-        print('Response: {}'.format(response))
-        selecionado = ModelAgendamento.query.filter_by(id=id).first()
+        if response.get('name'):
+            selecionado.name = response['name']
 
-        if response.get('observacao'):
-            selecionado.observacao = response['observacao']
+        if response.get('description'):
+            selecionado.description = response['description']
 
-        if response.get('periodo_inicio'):
-            selecionado.periodo_inicio = response['periodo_inicio']
+        if response.get('host'):
+            selecionado.host = response['host']
 
-        if response.get('periodo_fim'):
-            selecionado.periodo_fim = response['periodo_fim']
+        if response.get('port'):
+            selecionado.port = response['port']
 
-        # if response.get('port'):
-        #     selecionado.port = response['port']
-
-        print('Agendamento: {}'.format(response))
         if response:
-            print('Alteração realizada com sucesso!!!')
             db.session.commit()
-            return 201
 
-        return 200
-        # return jsonify({'Agendamento Atualizado':selecionado.id})
+        return jsonify({'Agendamento Atualizado':selecionado.id})
 
     def delete(self, agendamento_id):
         lab_selecionado = Laboratorio.query.filter_by(id=agendamento_id).first()
