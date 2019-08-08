@@ -69,7 +69,9 @@ class AgendamentoByUsuario(Resource):
         args = parser.parse_args()
         response = args
         print('Resposta obtida: {}'.format(response))
-        where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], response['data']+' '+response['horario_inicio'])
+        dataSolicitada = response['data']+' '+response['horario_inicio']
+        print('Data solicitada {}'.format(dataSolicitada))
+        where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], dataSolicitada)
         print('Where: {}'.format(where))
         result = engine.execute('select count(id) as contagendamentos from agendamentos where {}'.format(where))
 

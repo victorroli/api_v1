@@ -17,10 +17,10 @@ class AgendamentoByLaboratorio(Resource):
     def get(self, lab_id=None):
         agendamentos = []
         agendamento = ModelAgendamento.query.filter_by(laboratorio_id=lab_id)
-        print('Agendamento: {}'.format(agendamento))
+        # print('Agendamento: {}'.format(agendamento))
 
         for _row in agendamento:
-            print('Result: {}'.format(_row))
+            # print('Result: {}'.format(_row))
             agendamento = {
                 'periodo_inicio': _row.periodo_inicio,
                 'periodo_fim': _row.periodo_fim,
@@ -28,9 +28,9 @@ class AgendamentoByLaboratorio(Resource):
                 'observacao': _row.observacao,
                 'id': _row.id
             }
-            print('Objeto: {}'.format(agendamento))
+            # print('Objeto: {}'.format(agendamento))
             agendamentos.append(agendamento)
-        print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
+        # print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
         if len(agendamentos) == 0:
             print('Nenhum agendamento')
             return 200
@@ -72,7 +72,9 @@ class AgendamentoByLaboratorio(Resource):
         args = parser.parse_args()
         response = args
         print('Resposta obtida: {}'.format(response))
-        where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], response['data']+' '+response['horario_inicio'])
+        dataSolicitada = response['data']+' '+response['horario_inicio']
+        print('Data solicitada: {}'.format(dataSolicitada))
+        where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], dataSolicitada)
         print('Where: {}'.format(where))
         result = engine.execute('select count(id) as contagendamentos from agendamentos where {}'.format(where))
 

@@ -23,7 +23,7 @@ class Agendamento(Resource):
         result = engine.execute('select * from agendamentos {}'.format(where))
 
         for _row in result:
-            print('Result: {}'.format(_row))
+            # print('Result: {}'.format(_row))
             agendamento = {
                 'id': _row['id'],
                 'periodo_inicio': _row['periodo_inicio'],
@@ -31,9 +31,9 @@ class Agendamento(Resource):
                 'usuario_id': _row['usuario_id'],
                 'observacao': _row['observacao']
             }
-            print('Objeto: {}'.format(agendamento))
+            # print('Objeto: {}'.format(agendamento))
             agendamentos.append(agendamento)
-        print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
+        # print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
         if len(agendamentos) == 0:
             print('Nenhum agendamento')
             return 200
@@ -45,21 +45,28 @@ class Agendamento(Resource):
         response = parser.parse_args()
         print('Response: {}'.format(response))
         selecionado = ModelAgendamento.query.filter_by(id=id).first()
-
+        horario_inicial = response['data']+' '+response['horario_inicio']
+        horario_final = response['data']+' '+response['horario_fim']
+        # print('Horario inicial: {}'.format(horario_inicial))
+        # print('Horario final: {}'.format(horario_final))
+        # print('Variavel: {}'.format(selecionado['observacao']))
+        # print('Resposta da observacao {}'.format(response.get['observacao']))
         if response.get('observacao'):
+            print('Entrou no obs')
             selecionado.observacao = response['observacao']
 
-        if response.get('periodo_inicio'):
-            selecionado.periodo_inicio = response['periodo_inicio']
+        if response.get('horario_inicio'):
+            selecionado.periodo_inicio = horario_inicial
 
-        if response.get('periodo_fim'):
-            selecionado.periodo_fim = response['periodo_fim']
+        if response.get('horario_fim'):
+            selecionado.periodo_fim = horario_final
 
         # if response.get('port'):
         #     selecionado.port = response['port']
 
-        print('Agendamento: {}'.format(response))
-        if response:
+        print('Agendamento ini: {}'.format(selecionado.periodo_inicio))
+        print('Agendamento fim: {}'.format(selecionado.periodo_fim))
+        if selecionado != None:
             print('Alteração realizada com sucesso!!!')
             db.session.commit()
             return 201
@@ -67,19 +74,24 @@ class Agendamento(Resource):
         return 200
         # return jsonify({'Agendamento Atualizado':selecionado.id})
 
-    def delete(self, agendamento_id):
-        lab_selecionado = Laboratorio.query.filter_by(id=agendamento_id).first()
-        if lab_selecionado is None:
-            abort(404, "Laboratório {} não está cadastrado".format(agendamento_id))
-        db.session.delete(lab_selecionado)
+    def delete(self, id):
+        print('Id selecionado: {}'.format(id))
+        agendamento = ModelAgendamento.query.filter_by(id=id).first()
+        print('Agendamento no momento {}'.format(agendamento))
+        if agendamento is None:
+            print('Exclusão não realizada!!!');
+            return 204;
+        db.session.delete(agendamento)
         db.session.commit()
-        return jsonify({'Laboratório deletado':lab_selecionado.name})
+        return 200
 
     def post(self):
         args = parser.parse_args()
         response = args
-        print('Resposta obtida: {}'.format(response))
-        where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], response['data']+' '+response['horario_inicio'])
+        print('Resposta obtida p1: {}'.format(response))
+        dataSolicitada = response['data']+' '+response['horario_inicio']
+        print('Selecionada: {}'.format(dataSolicitada))
+        where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], dataSolicitada)
         print('Where: {}'.format(where))
         result = engine.execute('select count(id) as contagendamentos from agendamentos where {}'.format(where))
 
