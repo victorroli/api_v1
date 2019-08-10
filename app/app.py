@@ -13,6 +13,7 @@ from .resources.equipamento import Equipamento
 from .resources.experimento import Experimento
 from .resources.agendamentoByUsuario import AgendamentoByUsuario
 from .resources.agendamentoByLaboratorio import AgendamentoByLaboratorio
+from .resources.experimentoByUsuario import ExperimentoByUsuario
 from .resources.papel import Papel
 from .database import db, db_session
 
@@ -28,6 +29,7 @@ def create_app():
     api.add_resource(Usuarios, '/usuario', endpoint="usuario")
     api.add_resource(Experimento, '/experimento', endpoint="experimento")
     api.add_resource(Experimento, '/experimento/<int:experimento_id>', endpoint="experimentoIndividual")
+    api.add_resource(ExperimentoByUsuario, '/experimentos/usuario/<int:usuario_id>', endpoint="experimentoByUsuario")
     api.add_resource(Usuarios, '/usuario/<string:param_usuario>', endpoint="getUsuario")
     api.add_resource(Agendamento, '/agendamento', endpoint="agendamento")
     api.add_resource(Agendamento, '/agendamento/<int:id>', endpoint="getAgendamento")
