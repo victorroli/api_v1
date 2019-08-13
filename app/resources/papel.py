@@ -26,7 +26,10 @@ class Papel(Resource):
                 papeis.append(retorno)
         else:
             papel = PapelModel.query.filter_by(id=papel_id).first()
-            papeis = papel
+            # papel = {
+            #     'descricao':
+            # }
+            return jsonify({'descricao': papel.descricao})
 
         if papel is None:
             abort(404, "Usuário {} não está cadastrado".format(usuario))

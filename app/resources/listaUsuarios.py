@@ -1,7 +1,7 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from ..models.usuario import Usuario
-from ..database import db
+from ..database import db, engine
 import re
 
 
@@ -14,30 +14,31 @@ parser.add_argument('senha')
 parser.add_argument('email')
 parser.add_argument('papel_id')
 
-class Usuarios(Resource):
+class ListaUsuarios(Resource):
 
-    def get(self, param_usuario):
+    def get(self, usuario_id=None):
+        where = ''
+        if usuario_id:
+            where = ' id = {} '.format(usuario_id)
 
-        email = re.match(r"[^@]+@[^@]+\.[^@]+", param_usuario)
-        # print('Tratado: {}'.format(email))
+        listaUsuarios = engine.execute('select * from usuarios {}'.format(where))
+        print('Entrou aqui')
+        if listaUsuarios is None:
+            return 204
 
-        if email is None:
-            usuario = Usuario.query.filter_by(id=param_usuario).first()
-        else:
-            usuario = Usuario.query.filter_by(email=param_usuario).first()
+        usuarios = []
 
-        if usuario is None:
-            abort(404, "Usuário {} não está cadastrado".format(usuario))
+        for _row in listaUsuarios:
+            usuario = {
+                'id' : _row['id'],
+                'nome' : _row['nome'],
+                'nickname' : _row['nickname'],
+                'email' : _row['email'],
+                'papel_id' : _row['papel_id']
+            }
+            usuarios.append(usuario)
 
-        retorno = {
-            'id':usuario.id,
-            'nome':usuario.nome,
-            'nickname': usuario.nickname,
-            'email':usuario.email,
-            'senha':usuario.senha,
-            'papel_id': usuario.papel_id
-        }
-        return jsonify(retorno)
+        return jsonify(usuarios)
 
 
     def post(self):
