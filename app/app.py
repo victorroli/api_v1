@@ -16,6 +16,7 @@ from .resources.agendamentoByUsuario import AgendamentoByUsuario
 from .resources.agendamentoByLaboratorio import AgendamentoByLaboratorio
 from .resources.experimentoByUsuario import ExperimentoByUsuario
 from .resources.ConsultaAgendamento import ConsultaAgendamento
+from .resources.instituicao import Instituicao
 from .resources.papel import Papel
 from .database import db, db_session
 
@@ -41,6 +42,9 @@ def create_app():
     api.add_resource(AgendamentoByUsuario, '/agendamento/usuario/<int:usuario_id>', endpoint="getAgendamentoUsuario")
     api.add_resource(AgendamentoByLaboratorio, '/agendamento/laboratorio/<int:lab_id>', endpoint="getAgendamentoLaboratorio")
     api.add_resource(ConsultaAgendamento, '/agendamento/valida_horario/<int:usuario_id>', endpoint="getValidaHorario")
+    api.add_resource(Instituicao, '/instituicao', endpoint="setInstituicao")
+    api.add_resource(Instituicao, '/instituicao/<int:instituicao_id>', endpoint="getInstituicao")
+    api.add_resource(Instituicao, '/instituicao/', endpoint="getInstituicoes")
     db.init_app(app)
     migrate = Migrate(app, db)
 
