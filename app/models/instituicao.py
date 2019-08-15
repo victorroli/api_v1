@@ -1,4 +1,5 @@
 from ..database import db
+from .convenios import Convenios
 
 class Instituicao(db.Model):
     __tablename__ = 'instituicoes'

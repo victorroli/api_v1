@@ -1,6 +1,6 @@
 from ..database import db
 
-class Detalhamento(db.Model):
+class Detalhamentos(db.Model):
     __tablename__ = 'detalhamentos'
     id = db.Column(db.Integer, primary_key=True)
     dia = db.Column(db.String)
