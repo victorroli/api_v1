@@ -11,7 +11,7 @@ class Instituicao(db.Model):
     bairro = db.Column(db.String(100))
     rua = db.Column(db.String(100))
     numero = db.Column(db.Integer)
-    cidade = db.Column(db.String(100))
+    cidade = db.Column(db.String(200))
     complemento = db.Column(db.String(100))
 
     def __init__(self, nome, telefone, cnpj, cep, tipo, bairro, rua, cidade, numero, complemento):

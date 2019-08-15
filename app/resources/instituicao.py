@@ -11,6 +11,8 @@ parser.add_argument('cep')
 parser.add_argument('tipo')
 parser.add_argument('bairro')
 parser.add_argument('rua')
+parser.add_argument('numero')
+parser.add_argument('complemento')
 parser.add_argument('cidade')
 
 class Instituicao(Resource):
@@ -31,6 +33,8 @@ class Instituicao(Resource):
                 'cep': _row['cep'],
                 'tipo': _row['tipo'],
                 'bairro': _row['bairro'],
+                'numero': _row['numero'],
+                'complemento': _row['complemento'],
                 'rua': _row['rua'],
                 'cidade': _row['cidade']
             }
