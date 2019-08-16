@@ -1,105 +1,86 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
-from ..models.convenios import Convenios as ModelConvenios
+from ..models.convenios import Convenios as ModelConvenio
 from ..models.detalhamento_convenio import Detalhamentos
 from ..database import db, engine
 
 parser = reqparse.RequestParser()
-parser.add_argument('nome')
-parser.add_argument('telefone')
-parser.add_argument('cnpj')
-parser.add_argument('cep')
-parser.add_argument('tipo')
-parser.add_argument('bairro')
-parser.add_argument('rua')
-parser.add_argument('numero')
-parser.add_argument('complemento')
-parser.add_argument('cidade')
+parser.add_argument('criacao')
+parser.add_argument('validade')
+parser.add_argument('laboratorio_id', type=int)
+parser.add_argument('instituicao_id', type=int)
+parser.add_argument('tempo')
+parser.add_argument('dias', '--list', action='append')
 
 class Convenios(Resource):
-    def get(self, instituicao_id=None):
-        instituicoes = []
+    def get(self, convenio_id=None):
+        convenios = []
         where = ''
-        if instituicao_id != None:
-            where = ' where instituicao_id = {}'.format(instituicao_id);
+        if convenio_id != None:
+            where = ' where id = {}'.format(convenio_id);
 
-        result = engine.execute('select * from instituicoes {}'.format(where))
+        result = engine.execute('select * from convenios {}'.format(where))
 
         for _row in result:
-            instituicao = {
+            convenio = {
                 'id': _row['id'],
-                'nome': _row['nome'],
-                'telefone': _row['telefone'],
-                'cnpj': _row['cnpj'],
-                'cep': _row['cep'],
-                'tipo': _row['tipo'],
-                'bairro': _row['bairro'],
-                'numero': _row['numero'],
-                'complemento': _row['complemento'],
-                'rua': _row['rua'],
-                'cidade': _row['cidade']
+                'criacao': _row['criacao'],
+                'validade': _row['validade'],
+                'laboratorio_id': _row['laboratorio_id'],
+                'instituicao_id': _row['instituicao_id']
             }
-            # print('Objeto: {}'.format(agendamento))
-            instituicoes.append(instituicao)
-        # print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
-        if len(instituicoes) == 0:
-            print('Nenhum agendamento')
+            convenios.append(convenio)
+        if len(convenios) == 0:
+            print('Nenhum convênio registrado!')
             return 200
 
-        return jsonify(instituicoes)
-
-    # def put(self, id):
-
-        # response = parser.parse_args()
-        # print('Response: {}'.format(response))
-        # selecionado = ModelAgendamento.query.filter_by(id=id).first()
-        # horario_inicial = response['data']+' '+response['horario_inicio']
-        # horario_final = response['data']+' '+response['horario_fim']
-        #     print('Entrou no obs')
-        #     selecionado.observacao = response['observacao']
-        #
-        # if response.get('horario_inicio'):
-        #     selecionado.periodo_inicio = horario_inicial
-        #
-        # if response.get('horario_fim'):
-        #     selecionado.periodo_fim = horario_final
-        #
-        # # if response.get('port'):
-        # #     selecionado.port = response['port']
-        #
-        # print('Agendamento ini: {}'.format(selecionado.periodo_inicio))
-        # print('Agendamento fim: {}'.format(selecionado.periodo_fim))
-        # if selecionado != None:
-        #     print('Alteração realizada com sucesso!!!')
-        #     db.session.commit()
-        #     return 201
-        #
-        # return 200
-        # return jsonify({'Agendamento Atualizado':selecionado.id})
-
-    # def delete(self, id):
-    #     print('Id selecionado: {}'.format(id))
-    #     agendamento = ModelAgendamento.query.filter_by(id=id).first()
-    #     print('Agendamento no momento {}'.format(agendamento))
-    #     if agendamento is None:
-    #         print('Exclusão não realizada!!!');
-    #         return 204;
-    #     db.session.delete(agendamento)
-    #     db.session.commit()
-    #     return 200
+        return jsonify(convenios)
 
     def post(self):
         response = parser.parse_args()
-        print('Resposta obtida: {}'.format(response))
-        ModelInstituicao.query.filter_by(cnpj=response['cnpj'])
 
-        instituicao = ModelInstituicao(response['nome'],
-        response['telefone'], response['cnpj'], response['cep'],
-        response['tipo'], response['bairro'], response['rua'], response['cidade'])
-        print('Instituição inserida: {}'.format(instituicao))
-        if instituicao != '':
-            db.session.add(instituicao)
+        def cadastraDetalhamentos(id):
+            print('Chegou o id: {}'.format(id))
+            for dia in response['dias']:
+                print('Hoje: {}'.format(dia))
+                tempo = response['tempo'].split(':')
+                tempoTotal = int(tempo[0]) * 60 + int(tempo[1])
+                detalhamento = Detalhamentos(dia=dia, tempo=tempoTotal, convenio_id=id)
+                db.session.add(detalhamento)
+                print('Inseriu...')
             db.session.commit()
-            print('Instituição cadastrada!')
-            return 201
-        return 200
+
+
+        def convenioCadastrado(laboratorio, instituicao):
+            if laboratorio:
+                where = ' where '
+                where += ' laboratorio_id = {} '.format(laboratorio)
+            if instituicao:
+                where += ' and instituicao_id = {} '.format(instituicao)
+
+            resultado = engine.execute('select * from convenios {}'.format(where))
+            return resultado
+
+        try:
+            result = convenioCadastrado(response['laboratorio_id'], response['instituicao_id'])
+            if len(result.fetchall()) > 0:
+                return jsonify({'status': 200, 'mensagem': 'Convênio já realizado'})
+
+            convenio = ModelConvenio(laboratorio_id = response['laboratorio_id'],
+            instituicao_id = response['instituicao_id'], validade=response['validade'],
+            criacao=response['criacao'])
+            print('Convênio realizado: {}'.format(convenio))
+            if convenio != '':
+                db.session.add(convenio)
+                db.session.commit()
+                result = convenioCadastrado(response['laboratorio_id'], response['instituicao_id'])
+                convenioRetorno = result.fetchall()
+                id = ''
+                if len(convenioRetorno) > 0:
+                    for conv in convenioRetorno:
+                        id = conv.id
+                cadastraDetalhamentos(id)
+                return 201
+            return 200
+        except Exception as e:
+            return 400

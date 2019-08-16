@@ -47,6 +47,7 @@ def create_app():
     api.add_resource(Instituicao, '/instituicao/<int:instituicao_id>', endpoint="getInstituicao")
     api.add_resource(Instituicao, '/instituicao/', endpoint="getInstituicoes")
     api.add_resource(Convenios, '/convenios/', endpoint="getConvenios")
+    api.add_resource(Convenios, '/convenio/', endpoint="setConvenios")
     db.init_app(app)
     migrate = Migrate(app, db)
 
