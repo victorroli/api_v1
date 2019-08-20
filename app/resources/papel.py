@@ -14,6 +14,7 @@ parser.add_argument('descricao')
 class Papel(Resource):
 
     def get(self, papel_id=None):
+        print('Entrou no paper...')
         papeis = []
         if papel_id is None:
             papel = PapelModel.query.all()

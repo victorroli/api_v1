@@ -34,6 +34,7 @@ class ListaUsuarios(Resource):
                 'nome' : _row['nome'],
                 'nickname' : _row['nickname'],
                 'email' : _row['email'],
+                'verificado': _row['verificado'],
                 'papel_id' : _row['papel_id']
             }
             usuarios.append(usuario)

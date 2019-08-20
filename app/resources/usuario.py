@@ -35,7 +35,8 @@ class Usuarios(Resource):
             'nickname': usuario.nickname,
             'email':usuario.email,
             'senha':usuario.senha,
-            'papel_id': usuario.papel_id
+            'papel_id': usuario.papel_id,
+            'verificado': usuario.verificado
         }
         return jsonify(retorno)
 
@@ -49,7 +50,7 @@ class Usuarios(Resource):
             print('Usuário {} já cadastrado'.format(response['name']))
             return 200
         usuario = Usuario(nome=response['nome'], nickname=response['nickname'],
-        senha=response['senha'], email=response['email'], papel_id=int(response['papel_id']))
+        senha=response['senha'], email=response['email'], papel_id=int(response['papel_id']), verificado=False)
         print('user: {}'.format(usuario))
         if usuario != '':
             db.session.add(usuario)
