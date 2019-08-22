@@ -38,54 +38,85 @@ class Instituicao(Resource):
                 'rua': _row['rua'],
                 'cidade': _row['cidade']
             }
-            # print('Objeto: {}'.format(agendamento))
+
             instituicoes.append(instituicao)
-        # print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
+
         if len(instituicoes) == 0:
             print('Nenhum agendamento')
             return 200
 
         return jsonify(instituicoes)
 
-    # def put(self, id):
+    def put(self, instituicao_id):
 
-        # response = parser.parse_args()
-        # print('Response: {}'.format(response))
-        # selecionado = ModelAgendamento.query.filter_by(id=id).first()
-        # horario_inicial = response['data']+' '+response['horario_inicio']
-        # horario_final = response['data']+' '+response['horario_fim']
-        #     print('Entrou no obs')
-        #     selecionado.observacao = response['observacao']
-        #
-        # if response.get('horario_inicio'):
-        #     selecionado.periodo_inicio = horario_inicial
-        #
-        # if response.get('horario_fim'):
-        #     selecionado.periodo_fim = horario_final
-        #
-        # # if response.get('port'):
-        # #     selecionado.port = response['port']
-        #
-        # print('Agendamento ini: {}'.format(selecionado.periodo_inicio))
-        # print('Agendamento fim: {}'.format(selecionado.periodo_fim))
-        # if selecionado != None:
-        #     print('Alteração realizada com sucesso!!!')
-        #     db.session.commit()
-        #     return 201
-        #
-        # return 200
-        # return jsonify({'Agendamento Atualizado':selecionado.id})
+        response = parser.parse_args()
+        instituicao = ModelInstituicao.query.filter_by(id=instituicao_id).first()
 
-    # def delete(self, id):
-    #     print('Id selecionado: {}'.format(id))
-    #     agendamento = ModelAgendamento.query.filter_by(id=id).first()
-    #     print('Agendamento no momento {}'.format(agendamento))
-    #     if agendamento is None:
-    #         print('Exclusão não realizada!!!');
-    #         return 204;
-    #     db.session.delete(agendamento)
-    #     db.session.commit()
-    #     return 200
+        if response.get('nome'):
+            instituicao.nome = response['nome']
+
+        if response.get('cnpj'):
+            instituicao.cnpj = response['cnpj']
+
+        if response.get('cep'):
+            instituicao.cep = response['cep']
+
+        if response.get('telefone'):
+            instituicao.telefone = response['telefone']
+
+        if response.get('tipo'):
+            instituicao.tipo = response['tipo']
+
+        if response.get('bairro'):
+            instituicao.bairro = response['bairro']
+
+        if response.get('numero') is not None:
+            if response.get('numero'):
+                instituicao.numero = response['numero']
+            else:
+                instituicao.numero = 0
+
+        if response.get('complemento'):
+            instituicao.complemento = response['complemento']
+
+        if response.get('rua'):
+            instituicao.rua = response['rua']
+
+        if response.get('cidade'):
+            instituicao.cidade = response['cidade']
+
+        if instituicao != None:
+            db.session.commit()
+            instituicao = ModelInstituicao.query.filter_by(id=instituicao_id).first()
+            instituicao_resposta = {
+                'id': instituicao.id,
+                'nome': instituicao.nome,
+                'telefone': instituicao.telefone,
+                'cnpj': instituicao.cnpj,
+                'cep': instituicao.cep,
+                'tipo': instituicao.tipo,
+                'bairro': instituicao.bairro,
+                'numero': instituicao.numero,
+                'complemento': instituicao.complemento,
+                'rua': instituicao.rua,
+                'cidade': instituicao.cidade
+            }
+            return jsonify({'status': 201, 'content': "Instituição cadastrada com sucesso!",
+            'instituicao': instituicao_resposta })
+
+
+        return jsonify({'status': 204, 'content':'Nenhuma alteração realizada'})
+
+    def delete(self, instituicao_id):
+        print('Id selecionado: {}'.format(instituicao_id))
+        instituicao = ModelInstituicao.query.filter_by(id=instituicao_id).first()
+        print('Instituição no momento {}'.format(instituicao))
+        if instituicao is None:
+            print('Exclusão não realizada!!!');
+            return jsonify({'status': 204, 'content': "Nenhum registro encontrado"});
+        db.session.delete(instituicao)
+        db.session.commit()
+        return jsonify({'status': 200, "content": 'Instituição excluída'})
 
     def post(self):
         response = parser.parse_args()
