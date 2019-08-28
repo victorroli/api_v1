@@ -25,7 +25,7 @@ class Usuarios(Resource):
             usuario = Usuario.query.filter_by(email=param_usuario).first()
 
         if usuario is None:
-            abort(404, "Usuário {} não está cadastrado".format(usuario))
+            return jsonify({'status': 200, 'content': usuario})
 
         retorno = {
             'id':usuario.id,
@@ -49,38 +49,44 @@ class Usuarios(Resource):
         if usuario != '':
             db.session.add(usuario)
             db.session.commit()
-        return 201
+        return jsonify({'status': 201, 'content': "Usuário criado!"})
 
     def put(self, param_usuario):
+        print('Param user: {}'.format(param_usuario))
         response = parser.parse_args()
+        print('Parametros: {}'.format(response))
         usuario_selecionado = Usuario.query.filter_by(id=param_usuario).first()
 
-        if response.get('name'):
-            usuario_selecionado.name = response['name']
+        if response.get('nome'):
+            usuario_selecionado.nome = response['nome']
 
         if response.get('nickname'):
-            usuario_selecionado.description = response['nickname']
+            usuario_selecionado.nickname = response['nickname']
 
         if response.get('email'):
-            usuario_selecionado.host = response['email']
+            usuario_selecionado.email = response['email']
 
         if response.get('senha'):
-            usuario_selecionado.port = response['senha']
+            usuario_selecionado.senha = response['senha']
 
         if response.get('verificado'):
             if response['verificado'] == 'true':
                 usuario_selecionado.verificado = True
 
+        if response.get('papel_id'):
+            usuario_selecionado.papel_id = response['papel_id']
 
-        if response:
+        if usuario_selecionado is not None:
             db.session.commit()
+        else :
+            return jsonify({'status': 200, 'content': usuario_selecionado})
 
-        return jsonify({'status': 201, 'Usuário Atualizado':usuario_selecionado.id})
+        return jsonify({'status': 201, 'content':usuario_selecionado.id})
 
     def delete(self, param_usuario):
         usuario_selecionado = Usuario.query.filter_by(id=param_usuario).first()
         if usuario_selecionado is None:
             return jsonify({'status': 200, 'content': 'Nenhum registro encontrado'})
-        # db.session.delete(usuario_selecionado)
-        # db.session.commit()
+        db.session.delete(usuario_selecionado)
+        db.session.commit()
         return jsonify({'status': 200, 'content':usuario_selecionado.nome})
