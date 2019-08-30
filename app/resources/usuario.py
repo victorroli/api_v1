@@ -52,9 +52,8 @@ class Usuarios(Resource):
         return jsonify({'status': 201, 'content': "Usuário criado!"})
 
     def put(self, param_usuario):
-        print('Param user: {}'.format(param_usuario))
+
         response = parser.parse_args()
-        print('Parametros: {}'.format(response))
         usuario_selecionado = Usuario.query.filter_by(id=param_usuario).first()
 
         if response.get('nome'):

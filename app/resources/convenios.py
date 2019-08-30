@@ -14,40 +14,64 @@ parser.add_argument('dias', '--list', action='append')
 
 class Convenios(Resource):
     def get(self, convenio_id=None):
-        convenios = []
-        where = ''
-        if convenio_id != None:
-            where = ' where id = {}'.format(convenio_id);
+        try:
+            convenios = []
+            where = ''
 
-        result = engine.execute('select * from convenios {}'.format(where))
+            # Função que retornará o tempo reservado para a experimentação
+            # firmado no convênio...
 
-        for _row in result:
-            convenio = {
+            def buscaTempoConvenio(convenio_id):
+                if convenio_id:
+                    rsTempo = Detalhamentos.query.filter_by(convenio_id=convenio_id).first()
+                    if rsTempo is not None:
+                        return rsTempo.tempo
+
+            def buscaDiasConvenio(convenio_id):
+                if convenio_id:
+                    rsDias = Detalhamentos.query.filter_by(convenio_id=convenio_id).all()
+                    diasCadastrados = ''
+                    for _row in rsDias:
+                        if diasCadastrados:
+                            diasCadastrados += ', '
+                        diasCadastrados += str(_row)
+                    return diasCadastrados
+
+            if convenio_id != None:
+                where = ' where id = {}'.format(convenio_id);
+
+            result = engine.execute('select * from convenios {}'.format(where))
+
+            for _row in result:
+                convenio = {
                 'id': _row['id'],
                 'criacao': _row['criacao'],
                 'validade': _row['validade'],
                 'laboratorio_id': _row['laboratorio_id'],
-                'instituicao_id': _row['instituicao_id']
-            }
-            convenios.append(convenio)
-        if len(convenios) == 0:
-            print('Nenhum convênio registrado!')
-            return 200
+                'instituicao_id': _row['instituicao_id'],
+                'tempo': buscaTempoConvenio(_row['id']),
+                'dias': buscaDiasConvenio(_row['id'])
+                }
+                convenios.append(convenio)
+            if len(convenios) == 0:
+                print('Nenhum convênio registrado!')
+                return 200
 
-        return jsonify(convenios)
+            return jsonify({'status': 200, 'content':convenios})
+        except Exception as e:
+            raise
+        finally:
+            pass
 
     def post(self):
         response = parser.parse_args()
 
         def cadastraDetalhamentos(id):
-            print('Chegou o id: {}'.format(id))
             for dia in response['dias']:
-                print('Hoje: {}'.format(dia))
                 tempo = response['tempo'].split(':')
                 tempoTotal = int(tempo[0]) * 60 + int(tempo[1])
                 detalhamento = Detalhamentos(dia=dia, tempo=tempoTotal, convenio_id=id)
                 db.session.add(detalhamento)
-                print('Inseriu...')
             db.session.commit()
 
 
@@ -69,7 +93,7 @@ class Convenios(Resource):
             convenio = ModelConvenio(laboratorio_id = response['laboratorio_id'],
             instituicao_id = response['instituicao_id'], validade=response['validade'],
             criacao=response['criacao'])
-            print('Convênio realizado: {}'.format(convenio))
+
             if convenio != '':
                 db.session.add(convenio)
                 db.session.commit()
