@@ -10,7 +10,8 @@ parser.add_argument('name')
 parser.add_argument('description')
 parser.add_argument('host')
 parser.add_argument('port', type=int)
-parser.add_argument('tempo_experimento', type=int)
+parser.add_argument('tempo_experimento')
+parser.add_argument('status_id')
 parser.add_argument('equipamentos','--list', action='append')
 
 class Labs(Resource):
@@ -18,8 +19,21 @@ class Labs(Resource):
         if lab_id is None:
             labs = []
             response = Laboratorio.query.order_by(Laboratorio.id).all()
-            contador = 0
+
             for _row in response:
+
+                equipamentos = Equipamento.query.filter_by(laboratorio_id=_row.id).all()
+                equipamentos_lab = []
+                for equipamento in equipamentos:
+                    equipamentos_ret = {
+                        'id':equipamento.id,
+                        'nome':equipamento.nome,
+                        'uri': equipamento.uri,
+                        'descricao':equipamento.descricao
+                    }
+                    print('Descrição: ', equipamentos_ret)
+                    equipamentos_lab.append(equipamentos_ret)
+
                 retorno = {
                     'id':_row.id,
                     'name':_row.name,
@@ -27,7 +41,8 @@ class Labs(Resource):
                     'host':_row.host,
                     'port':_row.port,
                     'tempo': _row.tempo_experimento,
-                    'status': _row.status_id
+                    'status': _row.status_id,
+                    'equipamentos': equipamentos_lab
                 }
                 labs.append(retorno)
 
@@ -61,10 +76,9 @@ class Labs(Resource):
             return jsonify(retorno)
 
     def put(self, lab_id):
-        args = parser.parse_args()
-        response = request.form
-        selecionado = Laboratorio.query.filter_by(id=lab_id).first()
-
+        response = parser.parse_args()
+        selecionado = Laboratorio.query.filter_by(id=lab_id)
+        
         if response.get('name'):
             selecionado.name = response['name']
 
@@ -77,10 +91,29 @@ class Labs(Resource):
         if response.get('port'):
             selecionado.port = response['port']
 
-        if response:
-            db_session.commit()
+        if response.get('tempo_experimento'):
+            selecionado.tempo_experimento = response['tempo_experimento']
 
-        return jsonify({'lab Atualizado':selecionado.id})
+        if response.get('status_id'):
+            selecionado.status_id = response['status_id']
+
+        if selecionado is not None:
+            print('Resposta: ', selecionado.name)
+            print('Resposta: ', selecionado.description)
+            print('Resposta: ', selecionado.host)
+            print('Resposta: ', selecionado.port)
+            print('Resposta: ', selecionado.tempo_experimento)
+            db.session.commit()
+
+        laboratorio = {
+            'name': selecionado.name,
+            'description': selecionado.description,
+            'host': selecionado.host,
+            'port': selecionado.port,
+            'tempo_experimento': selecionado.tempo_experimento
+        }
+
+        return jsonify({'status':201, 'content':laboratorio})
 
     def delete(self, lab_id):
         lab_selecionado = Laboratorio.query.filter_by(id=lab_id).first()
