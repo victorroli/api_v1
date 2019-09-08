@@ -16,6 +16,7 @@ from .resources.agendamentoByUsuario import AgendamentoByUsuario
 from .resources.agendamentoByLaboratorio import AgendamentoByLaboratorio
 from .resources.experimentoByUsuario import ExperimentoByUsuario
 from .resources.ConsultaAgendamento import ConsultaAgendamento
+from .resources.laboratoriosSolicitacoes import LaboratoriosSolicitacoes
 from .resources.instituicao import Instituicao
 from .resources.papel import Papel
 from .resources.convenios import Convenios
@@ -51,6 +52,7 @@ def create_app():
     api.add_resource(Convenios, '/convenios/', endpoint="getConvenios")
     api.add_resource(Convenios, '/convenio/', endpoint="setConvenios")
     api.add_resource(Convenio, '/convenio/<int:convenio_id>', endpoint="setConvenio")
+    api.add_resource(LaboratoriosSolicitacoes, '/laboratorios/solicitacoes/', endpoint="solicitacoesLaboratorios")
     db.init_app(app)
     migrate = Migrate(app, db)
 

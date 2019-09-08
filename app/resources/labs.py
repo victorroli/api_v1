@@ -9,7 +9,7 @@ parser.add_argument('id')
 parser.add_argument('name')
 parser.add_argument('description')
 parser.add_argument('host')
-parser.add_argument('port', type=int)
+parser.add_argument('port')
 parser.add_argument('tempo_experimento')
 parser.add_argument('status_id')
 parser.add_argument('equipamentos','--list', action='append')
@@ -77,8 +77,8 @@ class Labs(Resource):
 
     def put(self, lab_id):
         response = parser.parse_args()
-        selecionado = Laboratorio.query.filter_by(id=lab_id)
-        
+        selecionado = Laboratorio.query.filter_by(id=lab_id).first()
+
         if response.get('name'):
             selecionado.name = response['name']
 
@@ -97,12 +97,7 @@ class Labs(Resource):
         if response.get('status_id'):
             selecionado.status_id = response['status_id']
 
-        if selecionado is not None:
-            print('Resposta: ', selecionado.name)
-            print('Resposta: ', selecionado.description)
-            print('Resposta: ', selecionado.host)
-            print('Resposta: ', selecionado.port)
-            print('Resposta: ', selecionado.tempo_experimento)
+        if selecionado != None:
             db.session.commit()
 
         laboratorio = {
@@ -116,12 +111,21 @@ class Labs(Resource):
         return jsonify({'status':201, 'content':laboratorio})
 
     def delete(self, lab_id):
+
+        def removeEquipamentos():
+            equipamentos = Equipamento.query.filter_by(laboratorio_id=lab_id).all()
+
+            for equipamento in equipamentos:
+                db.session.delete(equipamento)
+            db.session.commit()
+
         lab_selecionado = Laboratorio.query.filter_by(id=lab_id).first()
         if lab_selecionado is None:
-            abort(404, "Laboratório {} não está cadastrado".format(lab_id))
-        db_session.delete(lab_selecionado)
-        db_session.commit()
-        return jsonify({'Laboratório deletado':lab_selecionado.name})
+            return jsonify({'status': 200, 'content': lab_selecionado})
+        removeEquipamentos()
+        db.session.delete(lab_selecionado)
+        db.session.commit()
+        return jsonify({'status': 205, 'content':lab_selecionado.name})
 
     def post(self):
         response = parser.parse_args()

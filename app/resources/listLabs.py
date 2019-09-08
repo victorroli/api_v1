@@ -17,7 +17,7 @@ class ListLabs(Resource):
         res = conn.execute('select * from laboratorios')
         for _row in res:
             labs.append(dict(_row))
-        return jsonify(labs);
+        return jsonify(labs)
 
     def post(self):
         args = parser.parse_args()
