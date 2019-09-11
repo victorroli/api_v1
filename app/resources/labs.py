@@ -3,6 +3,8 @@ from flask_restful import Resource, reqparse
 from ..models.laboratorio import Laboratorio
 from ..models.equipamento import Equipamento
 from ..database import db
+# Biblioteca python que converte uma string no formato dict para um objeto do tipo dict
+import ast
 
 parser = reqparse.RequestParser()
 parser.add_argument('id')
@@ -13,6 +15,7 @@ parser.add_argument('port')
 parser.add_argument('tempo_experimento')
 parser.add_argument('status_id')
 parser.add_argument('equipamentos','--list', action='append')
+# parser.add_argument('equipamentos','--append-action', action='append')
 
 class Labs(Resource):
     def get(self, lab_id=None):
@@ -31,7 +34,6 @@ class Labs(Resource):
                         'uri': equipamento.uri,
                         'descricao':equipamento.descricao
                     }
-                    print('Descrição: ', equipamentos_ret)
                     equipamentos_lab.append(equipamentos_ret)
 
                 retorno = {
@@ -79,6 +81,29 @@ class Labs(Resource):
         response = parser.parse_args()
         selecionado = Laboratorio.query.filter_by(id=lab_id).first()
 
+        def atualizaEquipamentos():
+            print('Geral: ', response['equipamentos'])
+            lista = dir(response['equipamentos'][0])
+
+            for equipamento in response['equipamentos']:
+                objeto = ast.literal_eval(equipamento)
+
+                equipamentoBuscado = Equipamento.query.filter_by(id=objeto['id']).first()
+
+                if equipamentoBuscado.nome != objeto['nome']:
+                    equipamentoBuscado.nome = objeto['nome']
+
+                if equipamentoBuscado.uri != objeto['uri']:
+                    equipamentoBuscado.uri = objeto['uri']
+
+                if equipamentoBuscado.descricao != objeto['descricao']:
+                    equipamentoBuscado.descricao = objeto['descricao']
+
+                if equipamentoBuscado is not None:
+                    db.session.add(equipamentoBuscado)
+
+            db.session.commit()
+
         if response.get('name'):
             selecionado.name = response['name']
 
@@ -98,6 +123,7 @@ class Labs(Resource):
             selecionado.status_id = response['status_id']
 
         if selecionado != None:
+            atualizaEquipamentos()
             db.session.commit()
 
         laboratorio = {
@@ -116,7 +142,7 @@ class Labs(Resource):
             equipamentos = Equipamento.query.filter_by(laboratorio_id=lab_id).all()
 
             for equipamento in equipamentos:
-                db.session.delete(equipamento)
+                db.session.delete(equipamento.id)
             db.session.commit()
 
         lab_selecionado = Laboratorio.query.filter_by(id=lab_id).first()
