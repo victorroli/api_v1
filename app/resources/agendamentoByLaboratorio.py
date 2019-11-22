@@ -1,6 +1,7 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from ..models.agendamento import ModelAgendamento
+from ..models.usuario import Usuario
 from ..database import db, engine
 
 parser = reqparse.RequestParser()
@@ -15,22 +16,26 @@ parser.add_argument('usuario_id')
 
 class AgendamentoByLaboratorio(Resource):
     def get(self, lab_id=None):
+
+        def nomeUsuario(id_usuario):
+            usuario = Usuario.query.filter_by(id=id_usuario)
+
+            for row in usuario:
+                return row.nome
         agendamentos = []
         agendamento = ModelAgendamento.query.filter_by(laboratorio_id=lab_id)
-        # print('Agendamento: {}'.format(agendamento))
 
         for _row in agendamento:
-            # print('Result: {}'.format(_row))
             agendamento = {
                 'periodo_inicio': _row.periodo_inicio,
                 'periodo_fim': _row.periodo_fim,
-                'usuario_id': _row.usuario_id,
+                'usuario': nomeUsuario(_row.usuario_id),
                 'observacao': _row.observacao,
                 'id': _row.id
             }
-            # print('Objeto: {}'.format(agendamento))
+            print('Objeto: {}'.format(agendamento))
             agendamentos.append(agendamento)
-        # print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
+
         if len(agendamentos) == 0:
             print('Nenhum agendamento')
             return 200
