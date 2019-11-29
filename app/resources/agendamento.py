@@ -95,4 +95,4 @@ class Agendamento(Resource):
             db.session.commit()
         message = 'Erro ao realizar agendamento do laboratório'
         status = 201
-        return jsonify
+        return jsonify({'status': status})
