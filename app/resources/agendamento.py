@@ -23,7 +23,6 @@ class Agendamento(Resource):
         result = engine.execute('select * from agendamentos {}'.format(where))
 
         for _row in result:
-            # print('Result: {}'.format(_row))
             agendamento = {
                 'id': _row['id'],
                 'periodo_inicio': _row['periodo_inicio'],
@@ -31,9 +30,8 @@ class Agendamento(Resource):
                 'usuario_id': _row['usuario_id'],
                 'observacao': _row['observacao']
             }
-            # print('Objeto: {}'.format(agendamento))
             agendamentos.append(agendamento)
-        # print('Agend: {} {}'.format(agendamentos, len(agendamentos)))
+
         if len(agendamentos) == 0:
             print('Nenhum agendamento')
             return 200
@@ -43,14 +41,10 @@ class Agendamento(Resource):
     def put(self, id):
 
         response = parser.parse_args()
-        print('Response: {}'.format(response))
         selecionado = ModelAgendamento.query.filter_by(id=id).first()
         horario_inicial = response['data']+' '+response['horario_inicio']
         horario_final = response['data']+' '+response['horario_fim']
-        # print('Horario inicial: {}'.format(horario_inicial))
-        # print('Horario final: {}'.format(horario_final))
-        # print('Variavel: {}'.format(selecionado['observacao']))
-        # print('Resposta da observacao {}'.format(response.get['observacao']))
+
         if response.get('observacao'):
             print('Entrou no obs')
             selecionado.observacao = response['observacao']
@@ -64,8 +58,6 @@ class Agendamento(Resource):
         # if response.get('port'):
         #     selecionado.port = response['port']
 
-        print('Agendamento ini: {}'.format(selecionado.periodo_inicio))
-        print('Agendamento fim: {}'.format(selecionado.periodo_fim))
         if selecionado != None:
             print('Alteração realizada com sucesso!!!')
             db.session.commit()
@@ -75,9 +67,7 @@ class Agendamento(Resource):
         # return jsonify({'Agendamento Atualizado':selecionado.id})
 
     def delete(self, id):
-        print('Id selecionado: {}'.format(id))
         agendamento = ModelAgendamento.query.filter_by(id=id).first()
-        print('Agendamento no momento {}'.format(agendamento))
         if agendamento is None:
             print('Exclusão não realizada!!!');
             return 204;
@@ -88,11 +78,8 @@ class Agendamento(Resource):
     def post(self):
         args = parser.parse_args()
         response = args
-        print('Resposta obtida p1: {}'.format(response))
         dataSolicitada = response['data']+' '+response['horario_inicio']
-        print('Selecionada: {}'.format(dataSolicitada))
         where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], dataSolicitada)
-        print('Where: {}'.format(where))
         result = engine.execute('select count(id) as contagendamentos from agendamentos where {}'.format(where))
 
         for _row in result:
@@ -103,9 +90,9 @@ class Agendamento(Resource):
         agendamento = ModelAgendamento(response['observacao'],
         response['data']+' '+response['horario_inicio'], response['data']+' '+response['horario_fim'],
         response['laboratorio_id'], response['usuario_id'])
-        print('Agendamento inserido: {}'.format(agendamento))
         if agendamento != '':
             db.session.add(agendamento)
             db.session.commit()
-            print('Agendamento realizado')
-        return 201
+        message = 'Erro ao realizar agendamento do laboratório'
+        status = 201
+        return jsonify

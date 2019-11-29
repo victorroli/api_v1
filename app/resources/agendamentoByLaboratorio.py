@@ -44,8 +44,6 @@ class AgendamentoByLaboratorio(Resource):
 
     def put(self, id):
         response = parser.parse_args()
-        # response = request.form
-        print('Response: {}'.format(response['name']))
         selecionado = Agendamento.query.filter_by(id=id).first()
 
         if response.get('name'):
@@ -76,11 +74,8 @@ class AgendamentoByLaboratorio(Resource):
     def post(self):
         args = parser.parse_args()
         response = args
-        print('Resposta obtida: {}'.format(response))
         dataSolicitada = response['data']+' '+response['horario_inicio']
-        print('Data solicitada: {}'.format(dataSolicitada))
         where = ' laboratorio_id = {0} and \'{1}\' >= agendamentos.periodo_inicio and \'{1}\' <= agendamentos.periodo_fim'.format(response['laboratorio_id'], dataSolicitada)
-        print('Where: {}'.format(where))
         result = engine.execute('select count(id) as contagendamentos from agendamentos where {}'.format(where))
 
         for _row in result:
@@ -91,9 +86,7 @@ class AgendamentoByLaboratorio(Resource):
         agendamento = ModelAgendamento(response['observacao'],
         response['data']+' '+response['horario_inicio'], response['data']+' '+response['horario_fim'],
         response['laboratorio_id'], response['usuario_id'])
-        print('Agendamento inserido: {}'.format(agendamento))
         if agendamento != '':
             db.session.add(agendamento)
             db.session.commit()
-            print('Agendamento realizado')
         return 201
