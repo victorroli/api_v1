@@ -11,7 +11,6 @@ postgres_db = {
 }
 
 DB_URL = 'postgresql://{username}:{password}@{host}:{port}/{database}'.format(**postgres_db)
-print(DB_URL)
 DB_URI = postgres_db['uri']
 engine = create_engine(DB_URL)
 
