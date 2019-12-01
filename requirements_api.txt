@@ -42,7 +42,7 @@ onboard==1.2.0
 padme==1.1.1
 passlib==1.7.1
 pexpect==4.0.1
-Pillow==3.1.2
+Pillow==6.2.0
 plainbox==0.25
 psycopg2==2.7.5
 psycopg2-binary==2.7.7
