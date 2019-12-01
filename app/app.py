@@ -57,6 +57,8 @@ def create_app():
     migrate = Migrate(app, db)
 
     return app
+
+application = create_app()
     # @app.before_first_request
     # def create_user():
     #     # db.create_all()
