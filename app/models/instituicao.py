@@ -28,4 +28,4 @@ class Instituicao(db.Model):
         self.complemento = complemento
 
     def __repr__(self):
-        return 'Instituição: {} '.format(self.cnpj)
+        return ' {} '.format(self.cnpj)

@@ -2,6 +2,8 @@ from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from ..models.convenios import Convenios as ModelConvenio
 from ..models.detalhamento_convenio import Detalhamentos
+from ..models.laboratorio import Laboratorio
+from ..models.instituicao import Instituicao
 from ..database import db, engine
 
 parser = reqparse.RequestParser()
@@ -37,6 +39,24 @@ class Convenios(Resource):
                         diasCadastrados += str(_row)
                     return diasCadastrados
 
+            def buscaNomeInstituicao(id_instituicao):
+                print('Id instit: {}'.format(id_instituicao))
+                if(id_instituicao):
+                    instituicao = Instituicao.query.filter_by(id=id_instituicao).all()
+                    # for _row in instituicao:
+                    #     print('Linha: ',_row)
+                    print('Instituicao pega: {}'.format(instituicao.cnpj))
+                return
+
+            def buscaNomeLaboratorio(id_laboratorio):
+                print('Id laboratorio: {}'.format(id_laboratorio))
+                if(id_laboratorio):
+                    laboratorio = Laboratorio.query.filter_by(id=id_laboratorio).first()
+                    print('Laboratorio: ', laboratorio)
+                    # for _row in laboratorio:
+                    #     print('Linha: ', _row)
+                return
+
             if convenio_id != None:
                 where = ' where id = {}'.format(convenio_id);
 
@@ -47,8 +67,8 @@ class Convenios(Resource):
                 'id': _row['id'],
                 'criacao': _row['criacao'],
                 'validade': _row['validade'],
-                'laboratorio_id': _row['laboratorio_id'],
-                'instituicao_id': _row['instituicao_id'],
+                'laboratorio_id': buscaNomeLaboratorio(_row['laboratorio_id']),
+                'instituicao_id': buscaNomeInstituicao(_row['instituicao_id']),
                 'tempo': buscaTempoConvenio(_row['id']),
                 'dias': buscaDiasConvenio(_row['id'])
                 }
@@ -88,7 +108,7 @@ class Convenios(Resource):
         try:
             result = convenioCadastrado(response['laboratorio_id'], response['instituicao_id'])
             if len(result.fetchall()) > 0:
-                return jsonify({'status': 200, 'mensagem': 'Convênio já realizado'})
+                return jsonify({'status': 200, 'content': 'Convênio já realizado'})
 
             convenio = ModelConvenio(laboratorio_id = response['laboratorio_id'],
             instituicao_id = response['instituicao_id'], validade=response['validade'],
@@ -104,7 +124,7 @@ class Convenios(Resource):
                     for conv in convenioRetorno:
                         id = conv.id
                 cadastraDetalhamentos(id)
-                return 201
-            return 200
+                return jsonify({'status': 201, 'content': 'Convênio cadastrado com sucesso!'})
+            return jsonify({'status': 200, 'content': 'Convênio já realizado'})
         except Exception as e:
             return 400

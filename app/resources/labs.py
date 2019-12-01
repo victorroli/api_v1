@@ -83,22 +83,26 @@ class Labs(Resource):
 
         def atualizaEquipamentos():
             print('Geral: ', response['equipamentos'])
-            lista = dir(response['equipamentos'][0])
 
             for equipamento in response['equipamentos']:
                 objeto = ast.literal_eval(equipamento)
+                print('Objeto: ', objeto['nome'])
+                if equipamento['id'] != '':
+                    equipamentoBuscado = Equipamento.query.filter_by(id=objeto['id']).first()
 
-                equipamentoBuscado = Equipamento.query.filter_by(id=objeto['id']).first()
+                    if equipamentoBuscado.nome != objeto['nome']:
+                        equipamentoBuscado.nome = objeto['nome']
 
-                if equipamentoBuscado.nome != objeto['nome']:
-                    equipamentoBuscado.nome = objeto['nome']
+                    if equipamentoBuscado.uri != objeto['uri']:
+                        equipamentoBuscado.uri = objeto['uri']
 
-                if equipamentoBuscado.uri != objeto['uri']:
-                    equipamentoBuscado.uri = objeto['uri']
+                    if equipamentoBuscado.descricao != objeto['descricao']:
+                        equipamentoBuscado.descricao = objeto['descricao']
 
-                if equipamentoBuscado.descricao != objeto['descricao']:
-                    equipamentoBuscado.descricao = objeto['descricao']
-
+                else:
+                    equipamento = Equipamento(nome=equipamento['nome'], uri=equipamento['uri'],
+                    descricao=equipamento['descricao'], laboratorio_id=response['id'])
+                    print('Cadastrado: ', equipamento)
                 if equipamentoBuscado is not None:
                     db.session.add(equipamentoBuscado)
 
