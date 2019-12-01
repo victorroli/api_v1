@@ -3,5 +3,6 @@
 from app.app import create_app
 
 if __name__ == "__main__":
-    app = create_app()
-    app.run()
+    print('Enter...')
+    application = create_app()
+    application.run()
