@@ -57,8 +57,11 @@ def create_app():
     api.add_resource(Convenios, '/convenio/', endpoint="setConvenios")
     api.add_resource(Convenio, '/convenio/<int:convenio_id>', endpoint="setConvenio")
     api.add_resource(LaboratoriosSolicitacoes, '/laboratorios/solicitacoes/', endpoint="solicitacoesLaboratorios")
-    app.app_context().push()
+    #app.app_context().push()
     db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
 #    create_tables()
     migrate = Migrate(app, db)
 
