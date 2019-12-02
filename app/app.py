@@ -23,10 +23,6 @@ from .resources.convenios import Convenios
 from .resources.convenio import Convenio
 from .database import db, db_session
 
-#def create_tables():
-#    db.create_all()
-#    db.session.commit()
-
 def create_app():
     app = Flask("app", instance_relative_config=True)
     user_datastore = SQLAlchemyUserDatastore(db_session, Usuario, Papel)
@@ -41,7 +37,6 @@ def create_app():
     api.add_resource(Papel, '/papel/<int:papel_id>', endpoint="listpapel")
     api.add_resource(Papel, '/papel/', endpoint="listpapeis")
     api.add_resource(ListaUsuarios, '/usuarios', endpoint="lista_usuario")
-    # api.add_resource(ListaUsuarios, '/usuarios', endpoint="lista_usuarios")
     api.add_resource(Experimento, '/experimento', endpoint="experimento")
     api.add_resource(Experimento, '/experimento/<int:experimento_id>', endpoint="experimentoIndividual")
     api.add_resource(ExperimentoByUsuario, '/experimentos/usuario/<int:usuario_id>', endpoint="experimentoByUsuario")
@@ -57,19 +52,16 @@ def create_app():
     api.add_resource(Convenios, '/convenio/', endpoint="setConvenios")
     api.add_resource(Convenio, '/convenio/<int:convenio_id>', endpoint="setConvenio")
     api.add_resource(LaboratoriosSolicitacoes, '/laboratorios/solicitacoes/', endpoint="solicitacoesLaboratorios")
-    #app.app_context().push()
     db.init_app(app)
 
     with app.app_context():
         db.create_all()
+        # paper = Papel('admin', 'Administrador do sistema')
+        # db.session.add(paper)
+        # db.session.commit()
 #    create_tables()
     migrate = Migrate(app, db)
 
     return app
 
 application = create_app()
-    # @app.before_first_request
-#def create_tables():
-#    db.create_all()
-    #     user_datastore.create_user(nome="root", nickname="root", email='root@root.com', senha='root')
-#    db_session.commit()
