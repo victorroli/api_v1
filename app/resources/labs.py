@@ -86,9 +86,9 @@ class Labs(Resource):
 
             for equipamento in response['equipamentos']:
                 objeto = ast.literal_eval(equipamento)
-                print('Objeto: ', objeto)
-                print('Equipamento: ', equipamento)
-                if equipamento['id']:
+                # print('Objeto: ', objeto)
+                # print('Equipamento: ', equipamento)
+                if objeto['id']:
                     equipamentoBuscado = Equipamento.query.filter_by(id=objeto['id']).first()
 
                     if equipamentoBuscado.nome != objeto['nome']:
