@@ -37,7 +37,6 @@ class ConsultaAgendamento(Resource):
             agendamentos.append(agendamento)
 
         if len(agendamentos) == 0:
-            print('Nenhum agendamento')
-            return 203
+            return jsonify({'status': 203})
 
-        return 200
+        return jsonify({'status': 200})

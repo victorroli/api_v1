@@ -4,7 +4,7 @@ from flask_restful import Api
 from flask_migrate import Migrate
 from flask_security import Security, SQLAlchemyUserDatastore
 from config import Config
-from .models.papel import Papel
+# from .models.papel import Papel
 from .models.usuario import Usuario
 from .resources.labs import Labs
 from .resources.usuario import Usuarios
@@ -19,6 +19,7 @@ from .resources.ConsultaAgendamento import ConsultaAgendamento
 from .resources.laboratoriosSolicitacoes import LaboratoriosSolicitacoes
 from .resources.instituicao import Instituicao
 from .resources.papel import Papel
+from .resources.papelById import PapelById
 from .resources.convenios import Convenios
 from .resources.convenio import Convenio
 from .database import db, db_session
@@ -34,8 +35,8 @@ def create_app():
     api.add_resource(Labs, '/labs/<int:lab_id>', endpoint='lab')
     api.add_resource(Usuarios, '/usuario', endpoint="usuario")
     api.add_resource(Usuarios, '/usuario/<string:param_usuario>', endpoint="getUsuario")
-    api.add_resource(Papel, '/papel/<int:papel_id>', endpoint="listpapel")
-    api.add_resource(Papel, '/papel/', endpoint="listpapeis")
+    api.add_resource(PapelById, '/usuarios/papeis/<int:id>', endpoint="listpapel")
+    api.add_resource(Papel, '/usuarios/papeis/', endpoint="listpapeis")
     api.add_resource(ListaUsuarios, '/usuarios', endpoint="lista_usuario")
     api.add_resource(Experimento, '/experimento', endpoint="experimento")
     api.add_resource(Experimento, '/experimento/<int:experimento_id>', endpoint="experimentoIndividual")

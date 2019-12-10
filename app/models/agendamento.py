@@ -3,7 +3,7 @@ from ..database import db
 class ModelAgendamento(db.Model):
     __tablename__ = 'agendamentos'
     id = db.Column(db.Integer, primary_key=True)
-    observacao = db.Column(db.String(300))
+    observacao = db.Column(db.String(200))
     periodo_inicio = db.Column(db.DateTime, nullable=False)
     periodo_fim = db.Column(db.DateTime, nullable=False)
     laboratorio_id = db.Column(db.Integer, db.ForeignKey('laboratorios.id'), nullable=False)
