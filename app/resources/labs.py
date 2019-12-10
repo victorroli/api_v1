@@ -86,7 +86,7 @@ class Labs(Resource):
 
             for equipamento in response['equipamentos']:
                 objeto = ast.literal_eval(equipamento)
-                
+
                 if objeto['id']:
                     equipamentoBuscado = Equipamento.query.filter_by(id=objeto['id']).first()
 
@@ -159,7 +159,6 @@ class Labs(Resource):
 
     def post(self):
         response = parser.parse_args()
-
         def cadastraEquipamento(laboratorio_id):
             for row in response['equipamentos']:
                 row = json.loads(row.replace("\'", "\""))
@@ -173,7 +172,7 @@ class Labs(Resource):
 
         laboratorio_cadastrado = Laboratorio.query.filter_by(name=response['name']).first()
         if laboratorio_cadastrado != None:
-            return 200
+            return ({'status': 204, 'content': 'Laboratório já cadastrado'})
 
         laboratorio = Laboratorio(response['name'], response['description'],
         response['host'], response['port'], response['tempo_experimento'], 1)
@@ -184,4 +183,4 @@ class Labs(Resource):
             db.session.commit()
             laboratorioCadastrado = Laboratorio.query.filter_by(name=response['name']).first()
             cadastraEquipamento(laboratorioCadastrado.id)
-        return 201
+        return jsonify({'status': 201})

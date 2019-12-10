@@ -74,8 +74,7 @@ class Convenios(Resource):
                 }
                 convenios.append(convenio)
             if len(convenios) == 0:
-                print('Nenhum convênio registrado!')
-                return 200
+                return jsonify({'status': 200, 'mensagem': 'Nenhum convênio registrado'})
 
             return jsonify({'status': 200, 'content':convenios})
         except Exception as e:

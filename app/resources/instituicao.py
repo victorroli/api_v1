@@ -42,8 +42,7 @@ class Instituicao(Resource):
             instituicoes.append(instituicao)
 
         if len(instituicoes) == 0:
-            print('Nenhum agendamento')
-            return 200
+            return jsonify({'status': 200, 'content': 'Nenhuma instituição cadastrada'})
 
         return jsonify(instituicoes)
 

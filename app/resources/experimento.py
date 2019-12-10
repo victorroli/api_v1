@@ -18,7 +18,6 @@ parser.add_argument('observacao')
 class Experimento(Resource):
 
     def get(self, experimento_id):
-        print('Experimento pego: {}'.format(experimento_id))
         if experimento_id is None:
             where = ''
             experimentos = []
@@ -37,7 +36,7 @@ class Experimento(Resource):
             experimento = ExperimentoModel.query.filter_by(id=experimento_id).first()
 
         if experimento is None:
-            return jsonify({'status': 200})
+            return jsonify({'status': 200, 'mensagem': 'Nenhum experimento com esse id'})
 
         retorno = {
             'id': experimento.id,

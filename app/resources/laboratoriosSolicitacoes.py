@@ -37,6 +37,6 @@ class LaboratoriosSolicitacoes(Resource):
             lista_labs.append(laboratorio)
 
         # print('Lista obtida: ', lista_labs)
-        if lista_labs is not None:
+        if len(lista_labs) > 0:
             return jsonify({'status': 200, 'content': lista_labs})
-        return jsonify({'status': 200, 'content': 'Nenhuma solicitação...'})
+        return jsonify({'status': 200, 'content': 'Nenhuma solicitação'})
