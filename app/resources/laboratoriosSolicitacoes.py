@@ -33,10 +33,9 @@ class LaboratoriosSolicitacoes(Resource):
                 'status': _row.status_id,
                 'equipamentos': buscaEquipamentos(_row.id)
             }
-            print('Laboratorio: ', laboratorio)
             lista_labs.append(laboratorio)
 
         # print('Lista obtida: ', lista_labs)
         if len(lista_labs) > 0:
-            return jsonify({'status': 200, 'content': lista_labs})
+            return jsonify({'status': 200, 'content': '', 'solicitacoes': lista_labs})
         return jsonify({'status': 200, 'content': 'Nenhuma solicitação'})
