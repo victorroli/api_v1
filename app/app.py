@@ -9,6 +9,7 @@ from .models.usuario import Usuario
 from .resources.labs import Labs
 from .resources.usuario import Usuarios
 from .resources.listaUsuarios import ListaUsuarios
+from .resources.agendamentos import Agendamentos
 from .resources.agendamento import Agendamento
 from .resources.equipamento import Equipamento
 from .resources.experimento import Experimento
@@ -22,6 +23,7 @@ from .resources.papel import Papel
 from .resources.papelById import PapelById
 from .resources.convenios import Convenios
 from .resources.convenio import Convenio
+from .resources.login import Login
 from .database import db, db_session
 
 def create_app():
@@ -41,7 +43,9 @@ def create_app():
     api.add_resource(Experimento, '/experimento', endpoint="experimento")
     api.add_resource(Experimento, '/experimento/<int:experimento_id>', endpoint="experimentoIndividual")
     api.add_resource(ExperimentoByUsuario, '/experimentos/usuario/<int:usuario_id>', endpoint="experimentoByUsuario")
-    api.add_resource(Agendamento, '/agendamentos', endpoint="agendamento")
+    api.add_resource(Agendamentos, '/agendamentos', endpoint="listaAgendamentos")
+    api.add_resource(Agendamento, '/agendamento/', endpoint="setAgendamento")
+    api.add_resource(Agendamento, '/agendamento', endpoint="setReserva")
     api.add_resource(Agendamento, '/agendamento/<int:id>', endpoint="getAgendamento")
     api.add_resource(AgendamentoByUsuario, '/agendamento/usuario/<int:usuario_id>', endpoint="getAgendamentoUsuario")
     api.add_resource(AgendamentoByLaboratorio, '/agendamento/laboratorio/<int:lab_id>', endpoint="getAgendamentoLaboratorio")
@@ -53,6 +57,7 @@ def create_app():
     api.add_resource(Convenios, '/convenio/', endpoint="setConvenios")
     api.add_resource(Convenio, '/convenio/<int:convenio_id>', endpoint="setConvenio")
     api.add_resource(LaboratoriosSolicitacoes, '/laboratorios/solicitacoes/', endpoint="solicitacoesLaboratorios")
+    api.add_resource(Login, '/login/<string:param_usuario>', endpoint="login")
     db.init_app(app)
 
     with app.app_context():
