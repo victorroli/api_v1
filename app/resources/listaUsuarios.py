@@ -1,6 +1,7 @@
 from flask import json, jsonify, abort, make_response, request
 from flask_restful import Resource, reqparse
 from ..models.usuario import Usuario
+from ..models.papel import Papel
 from ..database import db, engine
 import re
 
@@ -21,6 +22,10 @@ class ListaUsuarios(Resource):
         if usuario_id:
             where = ' id = {} '.format(usuario_id)
 
+        def descricaoPapel(papel_id):
+            descricao = Papel.query.filter_by(id=papel_id).first()
+            return descricao.descricao
+
         listaUsuarios = engine.execute('select * from usuarios {}'.format(where))
         print('Entrou aqui')
         if listaUsuarios is None:
@@ -35,7 +40,8 @@ class ListaUsuarios(Resource):
                 'nickname' : _row['nickname'],
                 'email' : _row['email'],
                 'verificado': _row['verificado'],
-                'papel_id' : _row['papel_id']
+                'papel_id' : _row['papel_id'],
+                'descricao': descricaoPapel(_row['papel_id'])
             }
             usuarios.append(usuario)
 

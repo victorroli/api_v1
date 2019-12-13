@@ -21,7 +21,7 @@ class ExperimentoByUsuario(Resource):
 
         experimentos = []
         where = ''
-        print('Usuario {}'.format(usuario_id))
+        # print('Usuario {}'.format(usuario_id))
         if id != None:
             where = ' where usuario_id = {}'.format(usuario_id);
 
@@ -39,7 +39,7 @@ class ExperimentoByUsuario(Resource):
             }
             # print('Objeto: {}'.format(agendamento))
             experimentos.append(experimento)
-        print('Experimentos: {} {}'.format(experimentos, len(experimentos)))
+        # print('Experimentos: {} {}'.format(experimentos, len(experimentos)))
         if len(experimentos) == 0:
             print('Nenhum agendamento')
             return 204
@@ -48,7 +48,7 @@ class ExperimentoByUsuario(Resource):
 
     def post(self):
         response = parser.parse_args()
-        print('Obtidos: {}'.format(response))
+        # print('Obtidos: {}'.format(response))
         # experimento_cadastrado = ExperimentoModel.query.filter_by(periodoInicio=response['periodoInicio']).first()
         # print('Experimento cad: {}'.format(experimento_cadastrado))
         # if experimento_cadastrado != None:
@@ -63,10 +63,10 @@ class ExperimentoByUsuario(Resource):
 
     def put(self, experimento_id):
         response = parser.parse_args()
-        print('Entrou no put: {}'.format(response))
+        # print('Entrou no put: {}'.format(response))
         experimento_selecionado = ExperimentoModel.query.filter_by(id=experimento_id).first()
 
-        print('Resultado disso: {}'.format(experimento_selecionado))
+        # print('Resultado disso: {}'.format(experimento_selecionado))
 
         if response.get('periodoFim'):
             experimento_selecionado.periodoFim = datetime.datetime.utcnow()

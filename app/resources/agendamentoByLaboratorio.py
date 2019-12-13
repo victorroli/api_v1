@@ -33,14 +33,13 @@ class AgendamentoByLaboratorio(Resource):
                 'observacao': _row.observacao,
                 'id': _row.id
             }
-            print('Objeto: {}'.format(agendamento))
+            # print('Objeto: {}'.format(agendamento))
             agendamentos.append(agendamento)
 
         if len(agendamentos) == 0:
-            print('Nenhum agendamento')
-            return 200
+            return jsonify({'status': 204})
 
-        return jsonify(agendamentos)
+        return jsonify({'status': 200, 'agendamentos':agendamentos})
 
     def put(self, id):
         response = parser.parse_args()
