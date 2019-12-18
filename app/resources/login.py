@@ -24,7 +24,7 @@ class Login(Resource):
             usuario = Usuario.query.filter_by(nickname=param_usuario).first()
         else:
             usuario = Usuario.query.filter_by(email=param_usuario).first()
-
+        print('Usuario: ', usuario)
         if usuario is None:
             return jsonify({'status': 204})
 
