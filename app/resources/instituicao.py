@@ -124,7 +124,8 @@ class Instituicao(Resource):
 
         instituicao = ModelInstituicao(response['nome'],
         response['telefone'], response['cnpj'], response['cep'],
-        response['tipo'], response['bairro'], response['rua'], response['cidade'])
+        response['tipo'], response['bairro'], response['rua'], response['cidade'],
+        response['numero'], response['complemento'])
         print('Instituição inserida: {}'.format(instituicao))
         if instituicao != '':
             db.session.add(instituicao)
