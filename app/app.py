@@ -25,9 +25,10 @@ from .resources.convenios import Convenios
 from .resources.convenio import Convenio
 from .resources.login import Login
 from .database import db, db_session
-
+from flask_cors import CORS
 def create_app():
     app = Flask("app", instance_relative_config=True)
+    CORS(app)
     user_datastore = SQLAlchemyUserDatastore(db_session, Usuario, Papel)
     security = Security(app, user_datastore)
 
