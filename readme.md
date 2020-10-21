@@ -53,6 +53,4 @@ A documentação, descrevendo as entidades e terminais acessíveis, está dispon
 <img src="https://img.shields.io/static/v1?label=Python&message=3.7&color=3776AB&style=flat-square&logo=python" style="margin: 10px"/>
 <img src="https://img.shields.io/static/v1?label=Flask&message=1.1.1&color=000&style=flat-square&logo=flask" style="margin: 10px"/>
 <img src="https://img.shields.io/static/v1?label=PostgreSQL&message=11.9&color=336791&style=flat-square&logo=PostgreSQL" style="margin: 10px"/>
-<img src="https://img.shields.io/static/v1?label=Heroku&message= &color=430098&style=flat-square&logo=Heroku" style="margin: 10px"/>
-<img src="https://img.shields.io/static/v1?label=Postman&message= &color=FF6C37&style=flat-square&logo=Postman" style="margin: 10px"/>
 </div>
