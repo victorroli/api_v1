@@ -46,8 +46,8 @@ The basis for accessing the api is https://api-brlab-v1.herokuapp.com
 
 ## Documentation
 
-Toda a API e seus endpoints foram documentados e testados usando o Postman.
-A documentação, descrevendo as entidades e terminais acessíveis, está disponível em <https://documenter.getpostman.com/view/5404533/TVRq1RHu>
+The entire API and its endpoints were documented and tested using Postman.
+The documentation, describing the accessible entities and terminals, is available at <https://documenter.getpostman.com/view/5404533/TVRq1RHu>.
 
 <div style="display: flex;">
 <img src="https://img.shields.io/static/v1?label=Python&message=3.7&color=3776AB&style=flat-square&logo=python" style="margin: 10px"/>
