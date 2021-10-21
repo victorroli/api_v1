@@ -1,6 +1,6 @@
 alembic==1.0.7
 aniso8601==6.0.0
-Babel==2.6.0
+Babel==2.9.1
 beautifulsoup4==4.4.1
 blinker==1.4
 cffi==1.13.2
