@@ -20,7 +20,7 @@ Flask-Security==3.0.0
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 gunicorn==20.0.4
-html5lib==0.999
+html5lib==0.99999999
 httplib2==0.9.1
 #idna==2.8
 itsdangerous==0.24
